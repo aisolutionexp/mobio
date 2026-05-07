@@ -1,0 +1,69 @@
+import { redirect } from "next/navigation";
+import {
+  LayoutDashboard,
+  Layers,
+  Package,
+  FileText,
+  ShoppingBag,
+  Monitor,
+  Settings,
+} from "lucide-react";
+
+import { createClient } from "@/lib/supabase/server";
+import { resolveShell, type AppMetadata } from "@/lib/auth/permissions";
+import type { NavItem } from "@/components/editorial/numbered-nav";
+import { AtelierShell } from "./atelier-shell";
+
+const ATELIER_NAV: NavItem[] = [
+  {
+    number: "01",
+    label: "Salão",
+    href: "/atelier/salao",
+    icon: LayoutDashboard,
+  },
+  { number: "02", label: "Coleções", href: "/atelier/colecoes", icon: Layers },
+  { number: "03", label: "Produtos", href: "/atelier/produtos", icon: Package },
+  {
+    number: "04",
+    label: "Linesheet",
+    href: "/atelier/linesheet",
+    icon: FileText,
+  },
+  {
+    number: "05",
+    label: "Pedidos",
+    href: "/atelier/pedidos",
+    icon: ShoppingBag,
+  },
+  { number: "06", label: "Showroom", href: "/atelier/showroom", icon: Monitor },
+  {
+    number: "07",
+    label: "Configurações",
+    href: "/atelier/configuracoes",
+    icon: Settings,
+  },
+];
+
+export default async function AtelierLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/entrar");
+  }
+
+  const metadata = user.app_metadata as AppMetadata | undefined;
+  const shell = resolveShell(metadata);
+
+  if (shell !== "atelier" && shell !== "admin") {
+    redirect("/entrar");
+  }
+
+  return <AtelierShell items={ATELIER_NAV}>{children}</AtelierShell>;
+}

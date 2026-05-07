@@ -1,12 +1,35 @@
 "use client";
 
+import * as React from "react";
 import { Toaster as Sonner } from "sonner";
 
+const MOBILE_QUERY = "(max-width: 767px)";
+
+function subscribe(callback: () => void) {
+  const mql = window.matchMedia(MOBILE_QUERY);
+  mql.addEventListener("change", callback);
+  return () => mql.removeEventListener("change", callback);
+}
+
+function getSnapshot() {
+  return window.matchMedia(MOBILE_QUERY).matches;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 function Toaster() {
+  const isMobile = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+
   return (
     <Sonner
       className="toaster group"
-      position="top-right"
+      position={isMobile ? "top-center" : "top-right"}
       richColors
       toastOptions={{
         classNames: {

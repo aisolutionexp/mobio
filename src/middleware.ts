@@ -15,6 +15,8 @@ const PUBLIC_PATHS = [
   "/cadastro/lojista",
   "/auth/callback",
   "/api/health",
+  "/fabrica",
+  "/design-system",
 ];
 
 function isPublicPath(pathname: string): boolean {
