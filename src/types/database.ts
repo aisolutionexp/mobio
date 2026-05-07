@@ -108,6 +108,92 @@ export type Database = {
           },
         ];
       };
+      board_items: {
+        Row: {
+          added_at: string;
+          added_by: string;
+          board_id: string;
+          id: string;
+          position: number;
+          product_id: string;
+        };
+        Insert: {
+          added_at?: string;
+          added_by: string;
+          board_id: string;
+          id?: string;
+          position?: number;
+          product_id: string;
+        };
+        Update: {
+          added_at?: string;
+          added_by?: string;
+          board_id?: string;
+          id?: string;
+          position?: number;
+          product_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "board_items_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
+            referencedRelation: "boards";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "board_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      boards: {
+        Row: {
+          cover_url: string | null;
+          created_at: string;
+          created_by: string;
+          description: string | null;
+          id: string;
+          is_public: boolean;
+          name: string;
+          retailer_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          cover_url?: string | null;
+          created_at?: string;
+          created_by: string;
+          description?: string | null;
+          id?: string;
+          is_public?: boolean;
+          name: string;
+          retailer_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          cover_url?: string | null;
+          created_at?: string;
+          created_by?: string;
+          description?: string | null;
+          id?: string;
+          is_public?: boolean;
+          name?: string;
+          retailer_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "boards_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       categories: {
         Row: {
           created_at: string;
@@ -154,8 +240,10 @@ export type Database = {
           id: string;
           is_active: boolean;
           name: string;
+          published_at: string | null;
           season: string | null;
           slug: string;
+          status: string;
           updated_at: string;
           year: number | null;
         };
@@ -166,8 +254,10 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           name: string;
+          published_at?: string | null;
           season?: string | null;
           slug: string;
+          status?: string;
           updated_at?: string;
           year?: number | null;
         };
@@ -178,8 +268,10 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           name?: string;
+          published_at?: string | null;
           season?: string | null;
           slug?: string;
+          status?: string;
           updated_at?: string;
           year?: number | null;
         };
@@ -195,6 +287,7 @@ export type Database = {
       };
       factories: {
         Row: {
+          cnpj: string | null;
           cover_path: string | null;
           created_at: string;
           created_by: string;
@@ -211,6 +304,7 @@ export type Database = {
           website: string | null;
         };
         Insert: {
+          cnpj?: string | null;
           cover_path?: string | null;
           created_at?: string;
           created_by: string;
@@ -227,6 +321,7 @@ export type Database = {
           website?: string | null;
         };
         Update: {
+          cnpj?: string | null;
           cover_path?: string | null;
           created_at?: string;
           created_by?: string;
@@ -248,6 +343,39 @@ export type Database = {
             columns: ["region_id"];
             isOneToOne: false;
             referencedRelation: "regions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      factory_categories: {
+        Row: {
+          category_id: string;
+          created_at: string;
+          factory_id: string;
+        };
+        Insert: {
+          category_id: string;
+          created_at?: string;
+          factory_id: string;
+        };
+        Update: {
+          category_id?: string;
+          created_at?: string;
+          factory_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "factory_categories_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "factory_categories_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
             referencedColumns: ["id"];
           },
         ];
@@ -399,6 +527,290 @@ export type Database = {
           },
         ];
       };
+      linesheet_items: {
+        Row: {
+          created_at: string;
+          custom_price: number | null;
+          id: string;
+          linesheet_id: string;
+          position: number;
+          product_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          custom_price?: number | null;
+          id?: string;
+          linesheet_id: string;
+          position?: number;
+          product_id: string;
+        };
+        Update: {
+          created_at?: string;
+          custom_price?: number | null;
+          id?: string;
+          linesheet_id?: string;
+          position?: number;
+          product_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "linesheet_items_linesheet_id_fkey";
+            columns: ["linesheet_id"];
+            isOneToOne: false;
+            referencedRelation: "linesheets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "linesheet_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      linesheets: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          factory_id: string;
+          id: string;
+          name: string;
+          status: string;
+          target_retailer_id: string | null;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by: string;
+          factory_id: string;
+          id?: string;
+          name: string;
+          status?: string;
+          target_retailer_id?: string | null;
+          type?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          factory_id?: string;
+          id?: string;
+          name?: string;
+          status?: string;
+          target_retailer_id?: string | null;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "linesheets_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "linesheets_target_retailer_id_fkey";
+            columns: ["target_retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      notifications: {
+        Row: {
+          body: string | null;
+          created_at: string;
+          id: string;
+          is_read: boolean;
+          link: string | null;
+          title: string;
+          type: string;
+          user_id: string;
+        };
+        Insert: {
+          body?: string | null;
+          created_at?: string;
+          id?: string;
+          is_read?: boolean;
+          link?: string | null;
+          title: string;
+          type: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string | null;
+          created_at?: string;
+          id?: string;
+          is_read?: boolean;
+          link?: string | null;
+          title?: string;
+          type?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      order_items: {
+        Row: {
+          created_at: string;
+          id: string;
+          order_id: string;
+          product_id: string;
+          quantity: number;
+          unit_price_cents: number;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          order_id: string;
+          product_id: string;
+          quantity?: number;
+          unit_price_cents: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          order_id?: string;
+          product_id?: string;
+          quantity?: number;
+          unit_price_cents?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          currency: string;
+          factory_id: string;
+          id: string;
+          notes: string | null;
+          payment_status: string;
+          quote_id: string | null;
+          retailer_id: string;
+          shipping_address_id: string | null;
+          status: string;
+          total_cents: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by: string;
+          currency?: string;
+          factory_id: string;
+          id?: string;
+          notes?: string | null;
+          payment_status?: string;
+          quote_id?: string | null;
+          retailer_id: string;
+          shipping_address_id?: string | null;
+          status?: string;
+          total_cents?: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          currency?: string;
+          factory_id?: string;
+          id?: string;
+          notes?: string | null;
+          payment_status?: string;
+          quote_id?: string | null;
+          retailer_id?: string;
+          shipping_address_id?: string | null;
+          status?: string;
+          total_cents?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "orders_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "orders_quote_id_fkey";
+            columns: ["quote_id"];
+            isOneToOne: false;
+            referencedRelation: "quotes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "orders_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "orders_shipping_address_id_fkey";
+            columns: ["shipping_address_id"];
+            isOneToOne: false;
+            referencedRelation: "addresses";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      plans: {
+        Row: {
+          created_at: string;
+          currency: string;
+          features: Json;
+          id: string;
+          is_active: boolean;
+          name: string;
+          price_cents: number;
+          slug: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          currency?: string;
+          features?: Json;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          price_cents?: number;
+          slug: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          currency?: string;
+          features?: Json;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          price_cents?: number;
+          slug?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       product_images: {
         Row: {
           alt_text: string | null;
@@ -509,9 +921,11 @@ export type Database = {
           is_active: boolean;
           min_order_qty: number;
           name: string;
+          published_at: string | null;
           reference: string | null;
           retail_price: number | null;
           slug: string;
+          status: string | null;
           updated_at: string;
           wholesale_price: number | null;
         };
@@ -525,9 +939,11 @@ export type Database = {
           is_active?: boolean;
           min_order_qty?: number;
           name: string;
+          published_at?: string | null;
           reference?: string | null;
           retail_price?: number | null;
           slug: string;
+          status?: string | null;
           updated_at?: string;
           wholesale_price?: number | null;
         };
@@ -541,9 +957,11 @@ export type Database = {
           is_active?: boolean;
           min_order_qty?: number;
           name?: string;
+          published_at?: string | null;
           reference?: string | null;
           retail_price?: number | null;
           slug?: string;
+          status?: string | null;
           updated_at?: string;
           wholesale_price?: number | null;
         };
@@ -598,6 +1016,108 @@ export type Database = {
         };
         Relationships: [];
       };
+      quote_items: {
+        Row: {
+          created_at: string;
+          custom_specs: Json | null;
+          id: string;
+          product_id: string;
+          quantity: number;
+          quote_id: string;
+          unit_price_cents: number;
+        };
+        Insert: {
+          created_at?: string;
+          custom_specs?: Json | null;
+          id?: string;
+          product_id: string;
+          quantity?: number;
+          quote_id: string;
+          unit_price_cents: number;
+        };
+        Update: {
+          created_at?: string;
+          custom_specs?: Json | null;
+          id?: string;
+          product_id?: string;
+          quantity?: number;
+          quote_id?: string;
+          unit_price_cents?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quote_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quote_items_quote_id_fkey";
+            columns: ["quote_id"];
+            isOneToOne: false;
+            referencedRelation: "quotes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      quotes: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          currency: string;
+          factory_id: string;
+          id: string;
+          notes: string | null;
+          retailer_id: string;
+          status: string;
+          total_cents: number;
+          updated_at: string;
+          valid_until: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          created_by: string;
+          currency?: string;
+          factory_id: string;
+          id?: string;
+          notes?: string | null;
+          retailer_id: string;
+          status?: string;
+          total_cents?: number;
+          updated_at?: string;
+          valid_until?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          currency?: string;
+          factory_id?: string;
+          id?: string;
+          notes?: string | null;
+          retailer_id?: string;
+          status?: string;
+          total_cents?: number;
+          updated_at?: string;
+          valid_until?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quotes_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quotes_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       regions: {
         Row: {
           code: string;
@@ -624,6 +1144,39 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      retailer_segments: {
+        Row: {
+          category_id: string;
+          created_at: string;
+          retailer_id: string;
+        };
+        Insert: {
+          category_id: string;
+          created_at?: string;
+          retailer_id: string;
+        };
+        Update: {
+          category_id?: string;
+          created_at?: string;
+          retailer_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "retailer_segments_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "retailer_segments_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       retailers: {
         Row: {
@@ -677,6 +1230,148 @@ export type Database = {
             columns: ["region_id"];
             isOneToOne: false;
             referencedRelation: "regions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      showroom_attendees: {
+        Row: {
+          created_at: string;
+          id: string;
+          retailer_id: string;
+          showroom_id: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          retailer_id: string;
+          showroom_id: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          retailer_id?: string;
+          showroom_id?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "showroom_attendees_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "showroom_attendees_showroom_id_fkey";
+            columns: ["showroom_id"];
+            isOneToOne: false;
+            referencedRelation: "showrooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      showrooms: {
+        Row: {
+          capacity: number | null;
+          created_at: string;
+          created_by: string;
+          description: string | null;
+          event_date: string | null;
+          factory_id: string;
+          id: string;
+          location: string | null;
+          name: string;
+          status: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          capacity?: number | null;
+          created_at?: string;
+          created_by: string;
+          description?: string | null;
+          event_date?: string | null;
+          factory_id: string;
+          id?: string;
+          location?: string | null;
+          name: string;
+          status?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Update: {
+          capacity?: number | null;
+          created_at?: string;
+          created_by?: string;
+          description?: string | null;
+          event_date?: string | null;
+          factory_id?: string;
+          id?: string;
+          location?: string | null;
+          name?: string;
+          status?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "showrooms_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      subscriptions: {
+        Row: {
+          cancelled_at: string | null;
+          created_at: string;
+          current_period_end: string;
+          current_period_start: string;
+          id: string;
+          plan_id: string;
+          status: string;
+          tenant_id: string;
+          tenant_type: string;
+          updated_at: string;
+        };
+        Insert: {
+          cancelled_at?: string | null;
+          created_at?: string;
+          current_period_end: string;
+          current_period_start?: string;
+          id?: string;
+          plan_id: string;
+          status?: string;
+          tenant_id: string;
+          tenant_type: string;
+          updated_at?: string;
+        };
+        Update: {
+          cancelled_at?: string | null;
+          created_at?: string;
+          current_period_end?: string;
+          current_period_start?: string;
+          id?: string;
+          plan_id?: string;
+          status?: string;
+          tenant_id?: string;
+          tenant_type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "plans";
             referencedColumns: ["id"];
           },
         ];

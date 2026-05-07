@@ -21,7 +21,7 @@ const ATELIER_NAV: NavItem[] = [
     href: "/atelier/salao",
     icon: LayoutDashboard,
   },
-  { number: "02", label: "Coleções", href: "/atelier/colecoes", icon: Layers },
+  { number: "02", label: "Coleções", href: "/atelier/catalogo", icon: Layers },
   { number: "03", label: "Produtos", href: "/atelier/produtos", icon: Package },
   {
     number: "04",
@@ -39,7 +39,7 @@ const ATELIER_NAV: NavItem[] = [
   {
     number: "07",
     label: "Configurações",
-    href: "/atelier/configuracoes",
+    href: "/atelier/conta",
     icon: Settings,
   },
 ];
