@@ -1,0 +1,25 @@
+export const brand = {
+  name: "MOBIO",
+  tagline: "Fashion marketplace B2B",
+  description: "Conecta ateliês e fábricas a lojistas multimarca",
+  colors: {
+    primary: "#1a1a2e",
+    primaryForeground: "#f5f5f7",
+    secondary: "#e8e4df",
+    secondaryForeground: "#1a1a2e",
+    accent: "#c9a96e",
+    accentForeground: "#1a1a2e",
+    muted: "#f0ece6",
+    mutedForeground: "#6b6b7b",
+    destructive: "#dc2626",
+    background: "#faf9f7",
+    foreground: "#1a1a2e",
+    card: "#ffffff",
+    cardForeground: "#1a1a2e",
+    border: "#e2ddd5",
+  },
+  fonts: {
+    display: "Fraunces",
+    sans: "Inter",
+  },
+} as const;
