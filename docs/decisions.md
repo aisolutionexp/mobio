@@ -23,3 +23,20 @@
 **Contexto:** Sprint 0 tem 10 subtasks técnicas (bootstrap, tooling, CI/CD, observabilidade). Por regra do POP, qualquer feature/setup grande vai via `/team` — Claude principal não implementa direto.
 **Decisão:** Ao iniciar Sprint 0, invocar `/team` com escopo completo (Architect → Stack → Code Reviewer → QA), uma subtask por vez ou em lotes coerentes.
 **Escopo:** Todas as sprints do projeto.
+
+### [2026-05-07] Pendências técnicas Sprint 1 (gaps Lote B)
+
+**Contexto:** Edge Functions de signup (signup-factory, signup-retailer) recebem e validam via Zod campos que não existem no schema atual: `cnpj` em factories, `categories` (junction) em factory_categories, `segments` em retailers.
+**Decisão:** Aceitar como dívida técnica. Adicionar migrations em sprint posterior para: 1) coluna `cnpj` em factories com índice único, 2) tabela `factory_categories` (junction), 3) `retailer_segments` ou coluna `segments[]`. Idempotência atual por slug pode ter colisão se 2 nomes idênticos com CNPJs diferentes — refatorar para dedup por (cnpj, email) quando cnpj for persistido.
+**Escopo:** Edge Functions de signup. Campos são recebidos e logados como TODO no código.
+
+### [2026-05-07] Configuração manual no painel Supabase pós-Sprint 1
+
+**Contexto:** Sprint 1 introduz Auth Hook + Edge Functions que precisam de configuração no painel Supabase Dashboard.
+**Decisão:** Ações manuais necessárias após merge da Sprint 1:
+
+1. Authentication → Hooks → Custom Access Token Hook → schema `public`, function `custom_access_token_hook`
+2. Edge Functions → bootstrap-mobio-admin → Secrets → `BOOTSTRAP_SECRET` (valor seguro ≥ 32 chars)
+3. Edge Functions → cada function → Secrets → `SITE_URL = https://<domínio-produção>`
+4. Verificar que `SUPABASE_SERVICE_ROLE_KEY` está disponível (default)
+   **Escopo:** Deploy de produção da Sprint 1.
