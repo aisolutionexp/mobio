@@ -7,6 +7,7 @@ import {
   ShoppingBag,
   Store,
   MessageSquare,
+  Receipt,
   Settings,
 } from "lucide-react";
 
@@ -45,6 +46,12 @@ const ATELIER_NAV: NavItem[] = [
   },
   {
     number: "08",
+    label: "Financeiro",
+    href: "/atelier/financeiro",
+    icon: Receipt,
+  },
+  {
+    number: "09",
     label: "Configurações",
     href: "/atelier/conta",
     icon: Settings,

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Users, User, CreditCard, Settings2 } from "lucide-react";
+import { Users, User, CreditCard, Settings2, Receipt } from "lucide-react";
 
 import { Masthead } from "@/components/editorial/masthead";
 import { Plate } from "@/components/editorial/plate";
@@ -17,6 +17,12 @@ const CONTA_SECTIONS = [
     description: "Pagamento, logística e termos",
     href: "/atelier/conta/configuracoes",
     icon: Settings2,
+  },
+  {
+    title: "Financeiro",
+    description: "Faturamento e statements mensais",
+    href: "/atelier/financeiro",
+    icon: Receipt,
   },
   {
     title: "Plano e assinatura",

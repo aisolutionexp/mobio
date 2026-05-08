@@ -25,7 +25,7 @@ const CONTA_SECTIONS = [
     description: "Gerencie seu plano atual",
     href: "/lojista/conta/plano",
     icon: CreditCard,
-    placeholder: true,
+    placeholder: false,
   },
   {
     title: "Documentos",

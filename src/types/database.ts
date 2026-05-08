@@ -108,6 +108,39 @@ export type Database = {
           },
         ];
       };
+      audit_logs: {
+        Row: {
+          actor_user_id: string | null;
+          after_data: Json | null;
+          before_data: Json | null;
+          created_at: string;
+          id: string;
+          operation: string;
+          record_id: string;
+          table_name: string;
+        };
+        Insert: {
+          actor_user_id?: string | null;
+          after_data?: Json | null;
+          before_data?: Json | null;
+          created_at?: string;
+          id?: string;
+          operation: string;
+          record_id: string;
+          table_name: string;
+        };
+        Update: {
+          actor_user_id?: string | null;
+          after_data?: Json | null;
+          before_data?: Json | null;
+          created_at?: string;
+          id?: string;
+          operation?: string;
+          record_id?: string;
+          table_name?: string;
+        };
+        Relationships: [];
+      };
       authorized_retailers: {
         Row: {
           authorized_at: string;
@@ -2109,6 +2142,56 @@ export type Database = {
           },
         ];
       };
+      statements: {
+        Row: {
+          created_at: string;
+          factory_id: string;
+          fee_cents: number;
+          gmv_cents: number;
+          id: string;
+          net_cents: number;
+          orders_count: number;
+          period_end: string;
+          period_start: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          factory_id: string;
+          fee_cents?: number;
+          gmv_cents?: number;
+          id?: string;
+          net_cents?: number;
+          orders_count?: number;
+          period_end: string;
+          period_start: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          factory_id?: string;
+          fee_cents?: number;
+          gmv_cents?: number;
+          id?: string;
+          net_cents?: number;
+          orders_count?: number;
+          period_end?: string;
+          period_start?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "statements_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       subscriptions: {
         Row: {
           cancelled_at: string | null;
@@ -2215,7 +2298,55 @@ export type Database = {
       accept_quote: { Args: { p_quote_id: string }; Returns: string };
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
       fn_can_cancel_order: { Args: { p_order_id: string }; Returns: boolean };
+      fn_generate_monthly_statements: {
+        Args: { p_period_start: string };
+        Returns: number;
+      };
+      get_admin_overview: {
+        Args: never;
+        Returns: {
+          signups_last_30d: number;
+          total_factories: number;
+          total_gmv_cents: number;
+          total_orders: number;
+          total_retailers: number;
+        }[];
+      };
+      get_factory_analytics: {
+        Args: { p_end: string; p_factory_id: string; p_start: string };
+        Returns: {
+          active_retailers: number;
+          avg_ticket_cents: number;
+          gmv_cents: number;
+          orders_count: number;
+          top_products: Json;
+          top_retailers: Json;
+        }[];
+      };
       get_linesheet_by_token: { Args: { p_token: string }; Returns: Json };
+      get_retailer_analytics: {
+        Args: { p_end: string; p_retailer_id: string; p_start: string };
+        Returns: {
+          avg_ticket_cents: number;
+          orders_count: number;
+          top_categories: Json;
+          top_factories: Json;
+          total_spent_cents: number;
+        }[];
+      };
+      list_my_conversations: {
+        Args: { p_user_id: string };
+        Returns: {
+          context_id: string;
+          context_type: string;
+          conversation_id: string;
+          factory_id: string;
+          last_message_at: string;
+          last_message_body: string;
+          retailer_id: string;
+          unread_count: number;
+        }[];
+      };
       search_factories: {
         Args: {
           category_id_filter?: string;
@@ -2246,19 +2377,6 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
-      };
-      list_my_conversations: {
-        Args: { p_user_id: string };
-        Returns: {
-          conversation_id: string;
-          factory_id: string;
-          retailer_id: string;
-          context_type: string | null;
-          context_id: string | null;
-          last_message_body: string | null;
-          last_message_at: string | null;
-          unread_count: number;
-        }[];
       };
       search_messages: {
         Args: { p_conversation_id: string; p_query: string };

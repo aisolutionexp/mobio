@@ -1,5 +1,5 @@
 import { cache, Suspense } from "react";
-import { DollarSign, ShoppingBag, Ticket, Users } from "lucide-react";
+import { DollarSign, ShoppingBag, Ticket, Factory } from "lucide-react";
 
 import { Masthead } from "@/components/editorial/masthead";
 import { Eyebrow } from "@/components/editorial/eyebrow";
@@ -7,13 +7,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { KpiCard } from "@/components/domain/analytics/kpi-card";
 import { TopList } from "@/components/domain/analytics/top-list";
 import { PeriodSelector } from "@/components/domain/analytics/period-selector";
-import { ExportCsvButton } from "@/components/domain/financeiro/export-csv-button";
-import { getFactoryAnalytics } from "@/lib/actions/analytics";
-import { getExportAnalyticsCsvPayload } from "@/lib/actions/csv-export";
+import { getRetailerAnalytics } from "@/lib/actions/analytics";
 import { formatBRL } from "@/lib/utils";
 import type { PeriodKey } from "@/lib/validators/analytics";
 
-const getCachedFactoryAnalytics = cache(getFactoryAnalytics);
+const getCachedRetailerAnalytics = cache(getRetailerAnalytics);
 
 function KpiSkeleton() {
   return (
@@ -34,14 +32,14 @@ function TopListSkeleton() {
   );
 }
 
-async function FactoryKpis({ period }: { period: PeriodKey }) {
-  const data = await getCachedFactoryAnalytics(period);
+async function RetailerKpis({ period }: { period: PeriodKey }) {
+  const data = await getCachedRetailerAnalytics(period);
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <KpiCard
-        label="Faturamento (GMV)"
-        value={formatBRL(data.gmv_cents / 100)}
+        label="Total gasto"
+        value={formatBRL(data.total_spent_cents / 100)}
         icon={DollarSign}
       />
       <KpiCard
@@ -55,26 +53,28 @@ async function FactoryKpis({ period }: { period: PeriodKey }) {
         icon={Ticket}
       />
       <KpiCard
-        label="Lojistas ativas"
-        value={String(data.active_retailers)}
-        icon={Users}
+        label="Atelies distintos"
+        value={String(
+          Array.isArray(data.top_factories) ? data.top_factories.length : 0,
+        )}
+        icon={Factory}
       />
     </div>
   );
 }
 
-async function FactoryTopLists({ period }: { period: PeriodKey }) {
-  const data = await getCachedFactoryAnalytics(period);
+async function RetailerTopLists({ period }: { period: PeriodKey }) {
+  const data = await getCachedRetailerAnalytics(period);
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <TopList title="Top produtos" items={data.top_products} />
-      <TopList title="Top lojistas" items={data.top_retailers} />
+      <TopList title="Top atelies" items={data.top_factories} />
+      <TopList title="Top categorias" items={data.top_categories} />
     </div>
   );
 }
 
-export default async function SalaoPage({
+export default async function RetailerAnalyticsPage({
   searchParams,
 }: {
   searchParams: Promise<{ period?: string }>;
@@ -85,25 +85,18 @@ export default async function SalaoPage({
   return (
     <div className="space-y-8">
       <Masthead
-        eyebrow="Bem-vindo ao Salão"
-        title="Dashboard"
-        description="Visão geral do seu atelier"
+        eyebrow="Sua conta"
+        title="Analytics"
+        description="Acompanhe seus pedidos e parceiros"
         actions={
-          <div className="flex items-center gap-2">
-            <ExportCsvButton
-              getExportData={() =>
-                getExportAnalyticsCsvPayload("analytics_factory")
-              }
-            />
-            <Suspense fallback={null}>
-              <PeriodSelector basePath="/atelier/salao" />
-            </Suspense>
-          </div>
+          <Suspense fallback={null}>
+            <PeriodSelector basePath="/lojista/conta/analytics" />
+          </Suspense>
         }
       />
 
       <Suspense fallback={<KpiSkeleton />}>
-        <FactoryKpis period={period} />
+        <RetailerKpis period={period} />
       </Suspense>
 
       <section>
@@ -113,7 +106,7 @@ export default async function SalaoPage({
 
         <div className="mt-4">
           <Suspense fallback={<TopListSkeleton />}>
-            <FactoryTopLists period={period} />
+            <RetailerTopLists period={period} />
           </Suspense>
         </div>
       </section>

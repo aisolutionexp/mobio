@@ -2,12 +2,14 @@ import Link from "next/link";
 import { ShoppingBag, Eye } from "lucide-react";
 
 import { listFactoryOrders } from "@/lib/actions/orders";
+import { getExportOrdersCsvPayload } from "@/lib/actions/csv-export";
 import { Masthead } from "@/components/editorial/masthead";
 import { Plate } from "@/components/editorial/plate";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OrderStatusBadge } from "@/components/domain/orders/order-status-badge";
+import { ExportCsvButton } from "@/components/domain/financeiro/export-csv-button";
 
 function formatCurrency(cents: number, currency = "BRL") {
   return new Intl.NumberFormat("pt-BR", {
@@ -39,6 +41,7 @@ export default async function OrdersPage({
         eyebrow="Comércio"
         title="Pedidos"
         description="Gerencie os pedidos recebidos dos lojistas"
+        actions={<ExportCsvButton getExportData={getExportOrdersCsvPayload} />}
       />
 
       <div className="flex flex-wrap gap-2">

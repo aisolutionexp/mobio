@@ -1,5 +1,11 @@
 import { redirect } from "next/navigation";
-import { LayoutDashboard, Store, Factory, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Store,
+  Factory,
+  ShieldCheck,
+  Settings,
+} from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { resolveShell, type AppMetadata } from "@/lib/auth/permissions";
@@ -17,6 +23,12 @@ const ADMIN_NAV: NavItem[] = [
   { number: "03", label: "Fábricas", href: "/admin/fabricas", icon: Factory },
   {
     number: "04",
+    label: "Audit Log",
+    href: "/admin/audit",
+    icon: ShieldCheck,
+  },
+  {
+    number: "05",
     label: "Configurações",
     href: "/admin/configuracoes",
     icon: Settings,

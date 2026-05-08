@@ -5,7 +5,9 @@ import { Eyebrow } from "@/components/editorial/eyebrow";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { listRetailerOrders } from "@/lib/actions/orders-retailer";
+import { getExportRetailerOrdersCsvPayload } from "@/lib/actions/csv-export";
 import { RetailerOrderCard } from "@/components/domain/orders/retailer-order-card";
+import { ExportCsvButton } from "@/components/domain/financeiro/export-csv-button";
 
 const STATUS_FILTERS = [
   { value: "", label: "Todos" },
@@ -44,13 +46,18 @@ export default async function RetailerOrdersPage({
         title="Pedidos"
         description="Acompanhe seus pedidos com as fábricas"
         actions={
-          <Button
-            variant="outline"
-            size="sm"
-            render={<Link href="/lojista/pedidos/quotes" />}
-          >
-            Ver cotações
-          </Button>
+          <div className="flex items-center gap-2">
+            <ExportCsvButton
+              getExportData={getExportRetailerOrdersCsvPayload}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              render={<Link href="/lojista/pedidos/quotes" />}
+            >
+              Ver cotações
+            </Button>
+          </div>
         }
       />
 
