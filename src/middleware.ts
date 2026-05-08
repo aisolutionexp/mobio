@@ -14,6 +14,7 @@ const PUBLIC_PATHS = [
   "/cadastro/fabrica",
   "/cadastro/lojista",
   "/aceitar-convite",
+  "/aceitar-convite-fabrica",
   "/auth/callback",
   "/api/health",
   "/fabrica",

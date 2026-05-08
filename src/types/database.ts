@@ -108,6 +108,54 @@ export type Database = {
           },
         ];
       };
+      authorized_retailers: {
+        Row: {
+          authorized_at: string;
+          authorized_by: string;
+          created_at: string;
+          factory_id: string;
+          retailer_id: string;
+          revoked_at: string | null;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          authorized_at?: string;
+          authorized_by: string;
+          created_at?: string;
+          factory_id: string;
+          retailer_id: string;
+          revoked_at?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          authorized_at?: string;
+          authorized_by?: string;
+          created_at?: string;
+          factory_id?: string;
+          retailer_id?: string;
+          revoked_at?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "authorized_retailers_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "authorized_retailers_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       board_items: {
         Row: {
           added_at: string;
@@ -285,6 +333,51 @@ export type Database = {
           },
         ];
       };
+      conversations: {
+        Row: {
+          created_at: string;
+          factory_id: string;
+          id: string;
+          last_message_at: string | null;
+          retailer_id: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          factory_id: string;
+          id?: string;
+          last_message_at?: string | null;
+          retailer_id: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          factory_id?: string;
+          id?: string;
+          last_message_at?: string | null;
+          retailer_id?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "conversations_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversations_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       factories: {
         Row: {
           cnpj: string | null;
@@ -375,6 +468,94 @@ export type Database = {
             foreignKeyName: "factory_categories_factory_id_fkey";
             columns: ["factory_id"];
             isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      factory_invitations: {
+        Row: {
+          accepted_at: string | null;
+          created_at: string;
+          expires_at: string;
+          factory_id: string;
+          id: string;
+          invited_by: string;
+          retailer_email: string;
+          retailer_name: string | null;
+          status: string;
+          terms_snapshot: Json | null;
+          token: string;
+          updated_at: string;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          created_at?: string;
+          expires_at?: string;
+          factory_id: string;
+          id?: string;
+          invited_by: string;
+          retailer_email: string;
+          retailer_name?: string | null;
+          status?: string;
+          terms_snapshot?: Json | null;
+          token?: string;
+          updated_at?: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          created_at?: string;
+          expires_at?: string;
+          factory_id?: string;
+          id?: string;
+          invited_by?: string;
+          retailer_email?: string;
+          retailer_name?: string | null;
+          status?: string;
+          terms_snapshot?: Json | null;
+          token?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "factory_invitations_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: false;
+            referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      factory_settings: {
+        Row: {
+          commercial_terms: Json;
+          created_at: string;
+          factory_id: string;
+          payment_terms: Json;
+          shipping_policy: Json;
+          updated_at: string;
+        };
+        Insert: {
+          commercial_terms?: Json;
+          created_at?: string;
+          factory_id: string;
+          payment_terms?: Json;
+          shipping_policy?: Json;
+          updated_at?: string;
+        };
+        Update: {
+          commercial_terms?: Json;
+          created_at?: string;
+          factory_id?: string;
+          payment_terms?: Json;
+          shipping_policy?: Json;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "factory_settings_factory_id_fkey";
+            columns: ["factory_id"];
+            isOneToOne: true;
             referencedRelation: "factories";
             referencedColumns: ["id"];
           },
@@ -620,6 +801,50 @@ export type Database = {
           },
         ];
       };
+      messages: {
+        Row: {
+          attachments: Json | null;
+          body: string;
+          conversation_id: string;
+          created_at: string;
+          deleted_at: string | null;
+          edited_at: string | null;
+          id: string;
+          is_read: boolean;
+          sender_user_id: string;
+        };
+        Insert: {
+          attachments?: Json | null;
+          body: string;
+          conversation_id: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          edited_at?: string | null;
+          id?: string;
+          is_read?: boolean;
+          sender_user_id: string;
+        };
+        Update: {
+          attachments?: Json | null;
+          body?: string;
+          conversation_id?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          edited_at?: string | null;
+          id?: string;
+          is_read?: boolean;
+          sender_user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       notifications: {
         Row: {
           body: string | null;
@@ -703,6 +928,7 @@ export type Database = {
           factory_id: string;
           id: string;
           notes: string | null;
+          order_number: string | null;
           payment_status: string;
           quote_id: string | null;
           retailer_id: string;
@@ -718,6 +944,7 @@ export type Database = {
           factory_id: string;
           id?: string;
           notes?: string | null;
+          order_number?: string | null;
           payment_status?: string;
           quote_id?: string | null;
           retailer_id: string;
@@ -733,6 +960,7 @@ export type Database = {
           factory_id?: string;
           id?: string;
           notes?: string | null;
+          order_number?: string | null;
           payment_status?: string;
           quote_id?: string | null;
           retailer_id?: string;
@@ -1144,6 +1372,72 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      retailer_addresses: {
+        Row: {
+          address_line: string;
+          city: string;
+          complement: string | null;
+          created_at: string;
+          id: string;
+          is_default: boolean;
+          label: string;
+          neighborhood: string;
+          recipient_name: string;
+          region_id: string | null;
+          retailer_id: string;
+          state: string;
+          updated_at: string;
+          zip_code: string;
+        };
+        Insert: {
+          address_line: string;
+          city: string;
+          complement?: string | null;
+          created_at?: string;
+          id?: string;
+          is_default?: boolean;
+          label?: string;
+          neighborhood: string;
+          recipient_name: string;
+          region_id?: string | null;
+          retailer_id: string;
+          state: string;
+          updated_at?: string;
+          zip_code: string;
+        };
+        Update: {
+          address_line?: string;
+          city?: string;
+          complement?: string | null;
+          created_at?: string;
+          id?: string;
+          is_default?: boolean;
+          label?: string;
+          neighborhood?: string;
+          recipient_name?: string;
+          region_id?: string | null;
+          retailer_id?: string;
+          state?: string;
+          updated_at?: string;
+          zip_code?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "retailer_addresses_region_id_fkey";
+            columns: ["region_id"];
+            isOneToOne: false;
+            referencedRelation: "regions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "retailer_addresses_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       retailer_segments: {
         Row: {

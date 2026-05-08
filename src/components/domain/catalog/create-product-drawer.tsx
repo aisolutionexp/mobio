@@ -45,7 +45,10 @@ export function CreateProductDrawer({
         <Dialog.Popup className="bg-card border-border fixed inset-y-0 right-0 z-60 flex w-full max-w-md flex-col border-l shadow-lg">
           <div className="border-border flex items-center justify-between border-b px-6 py-4">
             <Eyebrow as="span">Novo produto</Eyebrow>
-            <Dialog.Close className="text-muted-foreground hover:text-foreground rounded-md p-1 transition-colors">
+            <Dialog.Close
+              className="text-muted-foreground hover:text-foreground rounded-md p-1 transition-colors"
+              aria-label="Fechar"
+            >
               <X className="size-4" />
             </Dialog.Close>
           </div>

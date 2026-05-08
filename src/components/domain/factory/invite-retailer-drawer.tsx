@@ -5,19 +5,12 @@ import { Dialog } from "@base-ui/react/dialog";
 import { X, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
-import { inviteMember } from "@/lib/actions/team";
+import { sendFactoryInvitation } from "@/lib/actions/factory-invitations";
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/ui/text-input";
-import { Select } from "@/components/ui/select";
-import { Field, FieldLabel, FieldControl } from "@/components/ui/field";
 import { Eyebrow } from "@/components/editorial/eyebrow";
 
-const ROLE_OPTIONS = [
-  { value: "atelier_member", label: "Membro" },
-  { value: "atelier_owner", label: "Proprietário" },
-];
-
-export function InviteMemberDrawer({
+export function InviteRetailerDrawer({
   children,
 }: {
   children: React.ReactNode;
@@ -25,22 +18,22 @@ export function InviteMemberDrawer({
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
-  const [inviteUrl, setInviteUrl] = React.useState<string | null>(null);
+  const [invitationUrl, setInvitationUrl] = React.useState<string | null>(null);
   const [copied, setCopied] = React.useState(false);
-  const [role, setRole] = React.useState("atelier_member");
+  const [includeTerms, setIncludeTerms] = React.useState(true);
 
   async function handleSubmit(formData: FormData) {
-    formData.set("role", role);
+    formData.set("include_terms_snapshot", includeTerms ? "true" : "false");
     setSubmitting(true);
     setError(null);
 
-    const result = await inviteMember(null, formData);
+    const result = await sendFactoryInvitation(null, formData);
 
     setSubmitting(false);
 
     if (result.success) {
-      toast.success("Convite enviado com sucesso");
-      setInviteUrl(result.data.inviteUrl);
+      toast.success("Convite criado com sucesso");
+      setInvitationUrl(result.data.invitationUrl);
     } else {
       setError(result.error);
       toast.error(result.error);
@@ -49,15 +42,15 @@ export function InviteMemberDrawer({
 
   function handleClose() {
     setOpen(false);
-    setInviteUrl(null);
+    setInvitationUrl(null);
     setError(null);
     setCopied(false);
-    setRole("atelier_member");
+    setIncludeTerms(true);
   }
 
   async function handleCopy() {
-    if (!inviteUrl) return;
-    await navigator.clipboard.writeText(inviteUrl);
+    if (!invitationUrl) return;
+    await navigator.clipboard.writeText(invitationUrl);
     setCopied(true);
     toast.success("Link copiado");
     setTimeout(() => setCopied(false), 2000);
@@ -73,7 +66,7 @@ export function InviteMemberDrawer({
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 transition-opacity" />
         <Dialog.Popup className="bg-card border-border fixed inset-y-0 right-0 z-60 flex w-full max-w-md flex-col border-l shadow-lg">
           <div className="border-border flex items-center justify-between border-b px-6 py-4">
-            <Eyebrow as="span">Convidar membro</Eyebrow>
+            <Eyebrow as="span">Convidar lojista</Eyebrow>
             <Dialog.Close
               className="text-muted-foreground hover:text-foreground rounded-md p-1 transition-colors"
               onClick={handleClose}
@@ -83,7 +76,7 @@ export function InviteMemberDrawer({
             </Dialog.Close>
           </div>
 
-          {inviteUrl ? (
+          {invitationUrl ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
               <div className="bg-success/10 text-success flex size-12 items-center justify-center rounded-full">
                 <Check className="size-6" />
@@ -92,11 +85,11 @@ export function InviteMemberDrawer({
                 Convite criado
               </h3>
               <p className="text-muted-foreground text-center text-sm">
-                Compartilhe o link abaixo com o novo membro. O convite expira em
-                7 dias.
+                Compartilhe o link abaixo com o lojista. O convite expira em 7
+                dias.
               </p>
               <div className="bg-muted w-full rounded-md p-3">
-                <p className="text-xs break-all">{inviteUrl}</p>
+                <p className="text-xs break-all">{invitationUrl}</p>
               </div>
               <Button
                 variant="accent"
@@ -110,26 +103,31 @@ export function InviteMemberDrawer({
             <form action={handleSubmit} className="flex flex-1 flex-col">
               <div className="flex-1 space-y-4 overflow-y-auto p-6">
                 <TextInput
-                  name="email"
-                  label="Email"
+                  name="retailer_email"
+                  label="Email do lojista"
                   type="email"
-                  placeholder="nome@empresa.com"
+                  placeholder="lojista@empresa.com"
                   required
-                  error={error && error.includes("email") ? error : undefined}
                 />
 
-                <Field>
-                  <FieldLabel htmlFor="role">Papel</FieldLabel>
-                  <FieldControl>
-                    <Select
-                      name="role"
-                      options={ROLE_OPTIONS}
-                      value={role}
-                      onValueChange={setRole}
-                      placeholder="Selecione o papel"
-                    />
-                  </FieldControl>
-                </Field>
+                <TextInput
+                  name="retailer_name"
+                  label="Nome do lojista"
+                  placeholder="Nome da loja ou responsável"
+                  required
+                  minLength={2}
+                  maxLength={200}
+                />
+
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={includeTerms}
+                    onChange={(e) => setIncludeTerms(e.target.checked)}
+                    className="accent-accent size-4 rounded"
+                  />
+                  Incluir política comercial atual no convite
+                </label>
 
                 {error && <p className="text-destructive text-sm">{error}</p>}
               </div>

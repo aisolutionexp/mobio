@@ -5,7 +5,7 @@ import {
   Package,
   FileText,
   ShoppingBag,
-  Monitor,
+  Store,
   Settings,
 } from "lucide-react";
 
@@ -35,7 +35,7 @@ const ATELIER_NAV: NavItem[] = [
     href: "/atelier/pedidos",
     icon: ShoppingBag,
   },
-  { number: "06", label: "Showroom", href: "/atelier/showroom", icon: Monitor },
+  { number: "06", label: "Lojistas", href: "/atelier/lojistas", icon: Store },
   {
     number: "07",
     label: "Configurações",

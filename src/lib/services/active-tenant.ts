@@ -60,3 +60,31 @@ export async function requireFactoryAccess(): Promise<{
 
   return { tenantId, role };
 }
+
+export async function requireRetailerAccess(): Promise<{
+  tenantId: string;
+  role: Role;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Não autenticado");
+
+  const metadata = user.app_metadata as AppMetadata | undefined;
+  const role = metadata?.active_role;
+  const tenantId = metadata?.active_tenant_id;
+
+  if (!role || !tenantId) throw new Error("Sessão inválida");
+
+  if (
+    role !== "lojista_owner" &&
+    role !== "lojista_buyer" &&
+    role !== "admin"
+  ) {
+    throw new Error("Acesso restrito a membros do lojista");
+  }
+
+  return { tenantId, role };
+}
