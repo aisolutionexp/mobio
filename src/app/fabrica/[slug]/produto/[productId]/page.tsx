@@ -4,6 +4,8 @@ import { ChevronRight } from "lucide-react";
 
 import { isUserAuthorizedForFactory } from "@/lib/actions/factory-page";
 import { getProductDetail } from "@/lib/actions/factory-catalog";
+import { listRetailerBoards } from "@/lib/actions/boards";
+import { listRetailerLinesheets } from "@/lib/actions/linesheets";
 import { formatBRL } from "@/lib/utils";
 import { Eyebrow } from "@/components/editorial/eyebrow";
 import { Plate } from "@/components/editorial/plate";
@@ -12,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { ProductGallery } from "@/components/domain/product/product-gallery";
 import { ProductTabs } from "@/components/domain/product/product-tabs";
 import { FavoriteButton } from "@/components/domain/discover/favorite-button";
+import { AddToBoardDialog } from "@/components/domain/boards/add-to-board-dialog";
+import { AddToLinesheetDialog } from "@/components/domain/linesheets/add-to-linesheet-dialog";
 
 export default async function ProductPage({
   params,
@@ -30,6 +34,37 @@ export default async function ProductPage({
   }
 
   const auth = await isUserAuthorizedForFactory(product.factoryId);
+
+  const isRetailer =
+    auth.role === "lojista_owner" || auth.role === "lojista_buyer";
+  let retailerBoards: { id: string; name: string; itemCount: number }[] = [];
+  let retailerLinesheets: {
+    id: string;
+    name: string;
+    itemCount: number;
+    pricingVariant: string;
+  }[] = [];
+  if (isRetailer) {
+    try {
+      const [boards, linesheets] = await Promise.all([
+        listRetailerBoards(),
+        listRetailerLinesheets(),
+      ]);
+      retailerBoards = boards.map((b) => ({
+        id: b.id,
+        name: b.name,
+        itemCount: b.itemCount,
+      }));
+      retailerLinesheets = linesheets.map((l) => ({
+        id: l.id,
+        name: l.name,
+        itemCount: l.itemCount,
+        pricingVariant: l.pricing_variant,
+      }));
+    } catch {
+      // retailer access may fail if user context changed
+    }
+  }
 
   if (!auth.authorized) {
     return (
@@ -127,9 +162,18 @@ export default async function ProductPage({
               type="product"
               isFavorited={false}
             />
-            <Button variant="outline" disabled>
-              Adicionar ao Board
-            </Button>
+            {isRetailer && (
+              <>
+                <AddToBoardDialog
+                  productId={product.id}
+                  boards={retailerBoards}
+                />
+                <AddToLinesheetDialog
+                  productId={product.id}
+                  linesheets={retailerLinesheets}
+                />
+              </>
+            )}
             <Button variant="accent" disabled>
               Solicitar cotação
             </Button>

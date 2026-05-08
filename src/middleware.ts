@@ -19,6 +19,7 @@ const PUBLIC_PATHS = [
   "/api/health",
   "/fabrica",
   "/design-system",
+  "/linesheet-publico",
 ];
 
 const ONBOARDING_PATH = "/onboarding";

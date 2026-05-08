@@ -40,3 +40,9 @@
 3. Edge Functions → cada function → Secrets → `SITE_URL = https://<domínio-produção>`
 4. Verificar que `SUPABASE_SERVICE_ROLE_KEY` está disponível (default)
    **Escopo:** Deploy de produção da Sprint 1.
+
+### [2026-05-08] Server actions S6 excedem 200 linhas
+
+**Contexto:** boards.ts (453) e linesheets.ts (691) excedem o limite de 200 linhas. Code Review S6 (W3) recomendou split.
+**Decisão:** Aceitar como pendência técnica. Refatorar em sprint futura splitando por domínio (e.g. linesheets-crud.ts, linesheet-items.ts, linesheet-pricing.ts).
+**Escopo:** src/lib/actions/. Não bloqueia funcionalidade.

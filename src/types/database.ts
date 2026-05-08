@@ -162,6 +162,7 @@ export type Database = {
           added_by: string;
           board_id: string;
           id: string;
+          note: string | null;
           position: number;
           product_id: string;
         };
@@ -170,6 +171,7 @@ export type Database = {
           added_by: string;
           board_id: string;
           id?: string;
+          note?: string | null;
           position?: number;
           product_id: string;
         };
@@ -178,6 +180,7 @@ export type Database = {
           added_by?: string;
           board_id?: string;
           id?: string;
+          note?: string | null;
           position?: number;
           product_id?: string;
         };
@@ -714,6 +717,7 @@ export type Database = {
           custom_price: number | null;
           id: string;
           linesheet_id: string;
+          note: string | null;
           position: number;
           product_id: string;
         };
@@ -722,6 +726,7 @@ export type Database = {
           custom_price?: number | null;
           id?: string;
           linesheet_id: string;
+          note?: string | null;
           position?: number;
           product_id: string;
         };
@@ -730,6 +735,7 @@ export type Database = {
           custom_price?: number | null;
           id?: string;
           linesheet_id?: string;
+          note?: string | null;
           position?: number;
           product_id?: string;
         };
@@ -750,13 +756,70 @@ export type Database = {
           },
         ];
       };
+      linesheet_share_tokens: {
+        Row: {
+          access_count: number;
+          created_at: string;
+          created_by: string;
+          expires_at: string | null;
+          id: string;
+          is_revoked: boolean;
+          last_accessed_at: string | null;
+          linesheet_id: string;
+          token: string;
+          updated_at: string;
+        };
+        Insert: {
+          access_count?: number;
+          created_at?: string;
+          created_by: string;
+          expires_at?: string | null;
+          id?: string;
+          is_revoked?: boolean;
+          last_accessed_at?: string | null;
+          linesheet_id: string;
+          token: string;
+          updated_at?: string;
+        };
+        Update: {
+          access_count?: number;
+          created_at?: string;
+          created_by?: string;
+          expires_at?: string | null;
+          id?: string;
+          is_revoked?: boolean;
+          last_accessed_at?: string | null;
+          linesheet_id?: string;
+          token?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "linesheet_share_tokens_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "linesheet_share_tokens_linesheet_id_fkey";
+            columns: ["linesheet_id"];
+            isOneToOne: false;
+            referencedRelation: "linesheets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       linesheets: {
         Row: {
           created_at: string;
           created_by: string;
-          factory_id: string;
+          description: string | null;
+          factory_id: string | null;
           id: string;
           name: string;
+          pricing_variant: string;
+          retailer_id: string | null;
           status: string;
           target_retailer_id: string | null;
           type: string;
@@ -765,9 +828,12 @@ export type Database = {
         Insert: {
           created_at?: string;
           created_by: string;
-          factory_id: string;
+          description?: string | null;
+          factory_id?: string | null;
           id?: string;
           name: string;
+          pricing_variant?: string;
+          retailer_id?: string | null;
           status?: string;
           target_retailer_id?: string | null;
           type?: string;
@@ -776,9 +842,12 @@ export type Database = {
         Update: {
           created_at?: string;
           created_by?: string;
-          factory_id?: string;
+          description?: string | null;
+          factory_id?: string | null;
           id?: string;
           name?: string;
+          pricing_variant?: string;
+          retailer_id?: string | null;
           status?: string;
           target_retailer_id?: string | null;
           type?: string;
@@ -790,6 +859,13 @@ export type Database = {
             columns: ["factory_id"];
             isOneToOne: false;
             referencedRelation: "factories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "linesheets_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
             referencedColumns: ["id"];
           },
           {
@@ -1148,6 +1224,7 @@ export type Database = {
           id: string;
           is_active: boolean;
           min_order_qty: number;
+          msrp: number | null;
           name: string;
           published_at: string | null;
           reference: string | null;
@@ -1166,6 +1243,7 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           min_order_qty?: number;
+          msrp?: number | null;
           name: string;
           published_at?: string | null;
           reference?: string | null;
@@ -1184,6 +1262,7 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           min_order_qty?: number;
+          msrp?: number | null;
           name?: string;
           published_at?: string | null;
           reference?: string | null;
@@ -1752,6 +1831,7 @@ export type Database = {
     };
     Functions: {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
+      get_linesheet_by_token: { Args: { p_token: string }; Returns: Json };
       search_factories: {
         Args: {
           category_id_filter?: string;
