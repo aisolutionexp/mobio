@@ -5,6 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatBRL(value: number | null | undefined): string {
+  if (value == null) return "Sob consulta";
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}
+
 export function slugify(text: string): string {
   return text
     .normalize("NFD")

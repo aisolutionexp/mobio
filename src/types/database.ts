@@ -1223,6 +1223,8 @@ export type Database = {
           created_at: string;
           full_name: string;
           id: string;
+          onboarding_completed_at: string | null;
+          onboarding_step: string;
           phone: string | null;
           updated_at: string;
         };
@@ -1231,6 +1233,8 @@ export type Database = {
           created_at?: string;
           full_name: string;
           id: string;
+          onboarding_completed_at?: string | null;
+          onboarding_step?: string;
           phone?: string | null;
           updated_at?: string;
         };
@@ -1239,6 +1243,8 @@ export type Database = {
           created_at?: string;
           full_name?: string;
           id?: string;
+          onboarding_completed_at?: string | null;
+          onboarding_step?: string;
           phone?: string | null;
           updated_at?: string;
         };
@@ -1486,6 +1492,10 @@ export type Database = {
           region_id: string | null;
           slug: string;
           updated_at: string;
+          verification_notes: string | null;
+          verification_status: string;
+          verified_at: string | null;
+          verified_by: string | null;
           website: string | null;
         };
         Insert: {
@@ -1501,6 +1511,10 @@ export type Database = {
           region_id?: string | null;
           slug: string;
           updated_at?: string;
+          verification_notes?: string | null;
+          verification_status?: string;
+          verified_at?: string | null;
+          verified_by?: string | null;
           website?: string | null;
         };
         Update: {
@@ -1516,6 +1530,10 @@ export type Database = {
           region_id?: string | null;
           slug?: string;
           updated_at?: string;
+          verification_notes?: string | null;
+          verification_status?: string;
+          verified_at?: string | null;
+          verified_by?: string | null;
           website?: string | null;
         };
         Relationships: [
@@ -1524,6 +1542,13 @@ export type Database = {
             columns: ["region_id"];
             isOneToOne: false;
             referencedRelation: "regions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "retailers_verified_by_fkey";
+            columns: ["verified_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];
@@ -1727,6 +1752,37 @@ export type Database = {
     };
     Functions: {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
+      search_factories: {
+        Args: {
+          category_id_filter?: string;
+          limit_count?: number;
+          query_text?: string;
+          region_id_filter?: string;
+        };
+        Returns: {
+          cnpj: string | null;
+          cover_path: string | null;
+          created_at: string;
+          created_by: string;
+          description: string | null;
+          email: string | null;
+          id: string;
+          is_active: boolean;
+          logo_path: string | null;
+          name: string;
+          phone: string | null;
+          region_id: string | null;
+          slug: string;
+          updated_at: string;
+          website: string | null;
+        }[];
+        SetofOptions: {
+          from: "*";
+          to: "factories";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       show_limit: { Args: never; Returns: number };
       show_trgm: { Args: { "": string }; Returns: string[] };
     };

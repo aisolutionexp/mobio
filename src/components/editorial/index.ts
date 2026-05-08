@@ -6,3 +6,4 @@ export { NumberedNav } from "./numbered-nav";
 export { PullQuote } from "./pull-quote";
 export { PageNumber } from "./page-number";
 export { FeaturedSpread } from "./featured-spread";
+export { RegionTile } from "./region-tile";
