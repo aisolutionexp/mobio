@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 import { requireFactoryAccess } from "@/lib/services/active-tenant";
+import { z } from "zod";
 import { createQuoteSchema } from "@/lib/validators/quotes";
+import { sendQuoteMessageSchema } from "@/lib/validators/quotes-retailer";
 import type { ActionResult } from "@/types/actions";
 
 const RETAILERS_PATH = "/atelier/lojistas";
@@ -206,6 +208,110 @@ export async function sendQuote(quoteId: string): Promise<ActionResult> {
     if (updateError) return { success: false, error: updateError.message };
 
     revalidatePath(`${RETAILERS_PATH}/${quote.retailer_id}`);
+    return { success: true, data: undefined };
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Erro interno do servidor";
+    return { success: false, error: message };
+  }
+}
+
+export async function listQuoteMessages(quoteId: string) {
+  const { tenantId } = await requireFactoryAccess();
+  const supabase = await createClient();
+
+  const { data: quote, error: quoteError } = await supabase
+    .from("quotes")
+    .select("id")
+    .eq("id", quoteId)
+    .eq("factory_id", tenantId)
+    .single();
+
+  if (quoteError || !quote) throw new Error("Cotação não encontrada");
+
+  const { data, error } = await supabase
+    .from("quote_messages")
+    .select(
+      "id, body, is_read, created_at, sender_user_id, profiles(id, full_name, avatar_path)",
+    )
+    .eq("quote_id", quoteId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function sendQuoteMessage(
+  quoteId: string,
+  body: string,
+): Promise<ActionResult> {
+  try {
+    const parsed = sendQuoteMessageSchema.safeParse({ quoteId, body });
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0].message };
+    }
+
+    const { tenantId } = await requireFactoryAccess();
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "Não autenticado" };
+
+    const { data: quote, error: quoteError } = await supabase
+      .from("quotes")
+      .select("id")
+      .eq("id", parsed.data.quoteId)
+      .eq("factory_id", tenantId)
+      .single();
+
+    if (quoteError || !quote) {
+      return { success: false, error: "Cotação não encontrada" };
+    }
+
+    const { error } = await supabase.from("quote_messages").insert({
+      quote_id: parsed.data.quoteId,
+      sender_user_id: user.id,
+      body: parsed.data.body,
+    });
+
+    if (error) return { success: false, error: error.message };
+
+    revalidatePath(`${RETAILERS_PATH}`);
+    return { success: true, data: undefined };
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Erro interno do servidor";
+    return { success: false, error: message };
+  }
+}
+
+export async function markQuoteMessagesAsRead(
+  quoteId: string,
+): Promise<ActionResult> {
+  try {
+    const parsed = z.string().uuid("Cotação inválida").safeParse(quoteId);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0].message };
+    }
+
+    await requireFactoryAccess();
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "Não autenticado" };
+
+    const { error } = await supabase
+      .from("quote_messages")
+      .update({ is_read: true })
+      .eq("quote_id", quoteId)
+      .neq("sender_user_id", user.id);
+
+    if (error) return { success: false, error: error.message };
+
     return { success: true, data: undefined };
   } catch (err) {
     const message =

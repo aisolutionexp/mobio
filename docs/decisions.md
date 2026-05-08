@@ -46,3 +46,9 @@
 **Contexto:** boards.ts (453) e linesheets.ts (691) excedem o limite de 200 linhas. Code Review S6 (W3) recomendou split.
 **Decisão:** Aceitar como pendência técnica. Refatorar em sprint futura splitando por domínio (e.g. linesheets-crud.ts, linesheet-items.ts, linesheet-pricing.ts).
 **Escopo:** src/lib/actions/. Não bloqueia funcionalidade.
+
+### [2026-05-08] S7 — Server actions de quotes excedem 200 linhas
+
+**Contexto:** quotes.ts (352) e quotes-retailer.ts (306) excedem o limite. CR S7 (W3+W4) recomendou split. Acumulado da S6.
+**Decisão:** Aceitar como pendência técnica. Refatorar em sprint futura splitando por domínio (e.g. quotes-crud.ts, quote-items.ts, quote-messages.ts).
+**Escopo:** src/lib/actions/.
