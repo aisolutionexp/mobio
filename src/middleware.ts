@@ -21,6 +21,8 @@ const PUBLIC_PATHS = [
   "/design-system",
 ];
 
+const ONBOARDING_PATH = "/onboarding";
+
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some(
     (p) => pathname === p || pathname.startsWith(p + "/"),
@@ -58,7 +60,7 @@ export async function middleware(request: NextRequest) {
     return new NextResponse("Service unavailable", { status: 500 });
   }
 
-  const { response, user } = await updateSession(request);
+  const { response, user, supabase } = await updateSession(request);
 
   if (!user) {
     if (isPublicPath(pathname)) {
@@ -73,6 +75,27 @@ export async function middleware(request: NextRequest) {
   const metadata = user.app_metadata as AppMetadata | undefined;
   const shell = resolveShell(metadata);
   const activeRole = metadata?.active_role;
+
+  const isOnboarding =
+    pathname === ONBOARDING_PATH || pathname.startsWith(ONBOARDING_PATH + "/");
+
+  if (supabase && !isOnboarding && !isPublicPath(pathname)) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("onboarding_step")
+      .eq("id", user.id)
+      .single();
+
+    if (profile && profile.onboarding_step !== "completed") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = ONBOARDING_PATH;
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
+  if (isOnboarding) {
+    return response;
+  }
 
   if (isPublicPath(pathname)) {
     if (shell) {
