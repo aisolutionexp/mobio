@@ -13,6 +13,7 @@ const PUBLIC_PATHS = [
   "/entrar",
   "/cadastro/fabrica",
   "/cadastro/lojista",
+  "/aceitar-convite",
   "/auth/callback",
   "/api/health",
   "/fabrica",
