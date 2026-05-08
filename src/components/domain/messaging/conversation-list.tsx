@@ -41,11 +41,12 @@ interface ConversationListProps {
 }
 
 export function ConversationList({
-  conversations,
+  conversations: initialConversations,
   currentUserId,
   selectedId,
   onSelect,
 }: ConversationListProps) {
+  const [conversations, setConversations] = useState(initialConversations);
   const [filter, setFilter] = useState("");
 
   const convIdsKey = useMemo(
