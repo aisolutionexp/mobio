@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Users, User, CreditCard, Settings2 } from "lucide-react";
+import { Users, MapPin, CreditCard, User } from "lucide-react";
 
 import { Masthead } from "@/components/editorial/masthead";
 import { Plate } from "@/components/editorial/plate";
@@ -8,36 +8,40 @@ const CONTA_SECTIONS = [
   {
     title: "Equipe",
     description: "Gerencie membros e convites",
-    href: "/atelier/conta/equipe",
+    href: "/lojista/conta/equipe",
     icon: Users,
+    placeholder: true,
   },
   {
-    title: "Configurações comerciais",
-    description: "Pagamento, logística e termos",
-    href: "/atelier/conta/configuracoes",
-    icon: Settings2,
+    title: "Endereços de entrega",
+    description: "Gerencie seus endereços de entrega",
+    href: "/lojista/conta/enderecos",
+    icon: MapPin,
+    placeholder: false,
   },
   {
     title: "Plano e assinatura",
     description: "Gerencie seu plano atual",
-    href: "/atelier/conta/plano",
+    href: "/lojista/conta/plano",
     icon: CreditCard,
+    placeholder: true,
   },
   {
     title: "Perfil",
     description: "Seus dados pessoais",
-    href: "/atelier/conta/perfil",
+    href: "/lojista/conta/perfil",
     icon: User,
+    placeholder: true,
   },
 ] as const;
 
-export default function ContaPage() {
+export default function LojistaContaPage() {
   return (
     <div className="space-y-8">
       <Masthead
-        eyebrow="Atelier"
-        title="Configurações"
-        description="Gerencie sua conta e equipe"
+        eyebrow="Lojista"
+        title="Minha conta"
+        description="Gerencie sua conta e configurações"
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -91,7 +91,10 @@ export function MemberActions({
               <Dialog.Title className="font-heading text-lg font-semibold">
                 Desativar membro
               </Dialog.Title>
-              <Dialog.Close className="text-muted-foreground hover:text-foreground rounded-md p-1">
+              <Dialog.Close
+                className="text-muted-foreground hover:text-foreground rounded-md p-1"
+                aria-label="Fechar"
+              >
                 <X className="size-4" />
               </Dialog.Close>
             </div>
