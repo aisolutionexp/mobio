@@ -3,6 +3,7 @@ import {
   Store,
   Compass,
   LayoutGrid,
+  FileText,
   Heart,
   ShoppingBag,
   User,
@@ -22,14 +23,20 @@ const LOJISTA_NAV: NavItem[] = [
     icon: Compass,
   },
   { number: "03", label: "Boards", href: "/lojista/boards", icon: LayoutGrid },
-  { number: "04", label: "Favoritos", href: "/lojista/favoritos", icon: Heart },
   {
-    number: "05",
+    number: "04",
+    label: "Linesheet",
+    href: "/lojista/linesheet",
+    icon: FileText,
+  },
+  { number: "05", label: "Favoritos", href: "/lojista/favoritos", icon: Heart },
+  {
+    number: "06",
     label: "Pedidos",
     href: "/lojista/pedidos",
     icon: ShoppingBag,
   },
-  { number: "06", label: "Conta", href: "/lojista/conta", icon: User },
+  { number: "07", label: "Conta", href: "/lojista/conta", icon: User },
 ];
 
 export default async function LojistaLayout({
