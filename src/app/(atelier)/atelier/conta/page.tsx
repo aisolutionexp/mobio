@@ -3,6 +3,7 @@ import { Users, User, CreditCard, Settings2 } from "lucide-react";
 
 import { Masthead } from "@/components/editorial/masthead";
 import { Plate } from "@/components/editorial/plate";
+import { PushSubscribeButton } from "@/components/domain/notifications/push-subscribe-button";
 
 const CONTA_SECTIONS = [
   {
@@ -39,6 +40,20 @@ export default function ContaPage() {
         title="Configurações"
         description="Gerencie sua conta e equipe"
       />
+
+      <Plate>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-heading text-base font-semibold">
+              Notificações push
+            </h3>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Receba alertas mesmo com o navegador fechado
+            </p>
+          </div>
+          <PushSubscribeButton />
+        </div>
+      </Plate>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CONTA_SECTIONS.map((section) => {

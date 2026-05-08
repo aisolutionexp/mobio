@@ -7,6 +7,7 @@ import { requireFactoryAccess } from "@/lib/services/active-tenant";
 import { Plate } from "@/components/editorial/plate";
 import { QuoteStatusBadge } from "@/components/domain/quotes/quote-status-badge";
 import { FactoryQuoteChatWrapper } from "@/components/domain/quotes/factory-quote-chat-wrapper";
+import { OpenConversationLink } from "@/components/domain/messaging/open-conversation-link";
 import { listQuoteMessages } from "@/lib/actions/quotes";
 
 function formatCurrency(cents: number, currency = "BRL") {
@@ -80,11 +81,22 @@ export default async function FactoryQuoteDetailPage({
         <span className="text-foreground font-medium">Cotação</span>
       </nav>
 
-      <div className="flex items-center gap-3">
-        <h1 className="font-heading text-2xl font-bold tracking-tight">
-          Cotação #{quoteId.slice(0, 8)}
-        </h1>
-        <QuoteStatusBadge status={quote.status} />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="font-heading text-2xl font-bold tracking-tight">
+            Cotação #{quoteId.slice(0, 8)}
+          </h1>
+          <QuoteStatusBadge status={quote.status} />
+        </div>
+        {retailer && (
+          <OpenConversationLink
+            factoryId={tenantId}
+            retailerId={retailer.id}
+            contextType="quote"
+            contextId={quote.id}
+            shellPrefix="atelier"
+          />
+        )}
       </div>
 
       <Plate eyebrow="Itens da cotação">

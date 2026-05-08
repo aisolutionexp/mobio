@@ -52,3 +52,24 @@
 **Contexto:** quotes.ts (352) e quotes-retailer.ts (306) excedem o limite. CR S7 (W3+W4) recomendou split. Acumulado da S6.
 **Decisão:** Aceitar como pendência técnica. Refatorar em sprint futura splitando por domínio (e.g. quotes-crud.ts, quote-items.ts, quote-messages.ts).
 **Escopo:** src/lib/actions/.
+
+### [2026-05-08] S8 — VAPID keys para Web Push
+
+**Contexto:** Web Push requer par de chaves VAPID (public + private). As chaves devem ser geradas uma vez e setadas como variáveis de ambiente.
+**Decisão:** Gerar com `npx web-push generate-vapid-keys`. Configurar:
+
+1. `.env.local` do Next.js: `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`
+2. Supabase Edge Functions secrets: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (via `npx supabase secrets set`)
+   **Escopo:** Web Push (service worker + edge function send-web-push). `VAPID_PRIVATE_KEY` nunca exposta no client.
+
+### [2026-05-08] S8 — Server actions e components excedem 200 linhas
+
+**Contexto:** conversations.ts (358), showrooms.ts (336), conversation-view.tsx (311) excedem o limite. Acumulado das sprints S6-S7-S8.
+**Decisão:** Aceitar como pendência técnica. Refatorar em sprint dedicada (split conversations-crud, conversations-messages, etc).
+**Escopo:** src/lib/actions/, src/components/domain/messaging/.
+
+### [2026-05-08] S8 — Service Worker como public/sw.js
+
+**Contexto:** Next.js 16 com Turbopack não suporta next-pwa nativamente. Service workers precisam estar no diretório public/.
+**Decisão:** Criar `public/sw.js` como vanilla service worker (sem build step). Registrado pelo componente `PushSubscribeButton` no client.
+**Escopo:** Web Push notifications.
