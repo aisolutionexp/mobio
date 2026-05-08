@@ -175,7 +175,7 @@ function AppShell({
                 </Link>
                 <Button
                   variant="ghost"
-                  size="icon-sm"
+                  size="icon"
                   aria-label="Fechar menu"
                   onClick={closeDrawer}
                 >
@@ -198,7 +198,7 @@ function AppShell({
           <Button
             ref={triggerRef}
             variant="ghost"
-            size="icon-sm"
+            size="icon"
             className="md:hidden"
             aria-label="Abrir menu"
             onClick={() => setDrawerOpen(true)}
@@ -225,7 +225,7 @@ function AppShell({
             {topbarActions}
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon"
               aria-label="Notificações"
               className="hidden md:inline-flex"
             >
@@ -241,7 +241,7 @@ function AppShell({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 px-4 py-4 md:px-6 md:py-6">
+        <main id="main-content" className="flex-1 px-4 py-4 md:px-6 md:py-6">
           <div className="mx-auto max-w-7xl">{children}</div>
         </main>
       </div>

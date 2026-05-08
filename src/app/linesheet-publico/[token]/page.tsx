@@ -13,9 +13,23 @@ export async function generateMetadata({
   const data = await getPublicLinesheetData(token);
   if (!data) return { title: "Linesheet" };
 
+  const title = `${data.name} — MOBIO`;
+  const description = `Linesheet de ${data.factoryName} com ${data.items.length} ${data.items.length === 1 ? "produto" : "produtos"}.`;
+
   return {
-    title: `${data.name} — MOBIO`,
-    description: `Linesheet de ${data.factoryName}`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+    robots: { index: false, follow: false },
   };
 }
 

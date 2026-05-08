@@ -73,3 +73,21 @@
 **Contexto:** Next.js 16 com Turbopack não suporta next-pwa nativamente. Service workers precisam estar no diretório public/.
 **Decisão:** Criar `public/sw.js` como vanilla service worker (sem build step). Registrado pelo componente `PushSubscribeButton` no client.
 **Escopo:** Web Push notifications.
+
+### [2026-05-08] S10 — Sentry alertas e regras (pendência operacional)
+
+**Contexto:** Sentry SDK já integrado com tracesSampleRate 0.1 (prod) / 1.0 (dev), source maps upload via withSentryConfig, tunnel route /monitoring. Alertas e regras de notificação precisam ser configurados no painel Sentry.
+**Decisão:** Configuração de alertas é pendência operacional (André configura no painel Sentry):
+
+1. Alerta de erro em signup (signup-factory, signup-retailer) — prioridade alta
+2. Alerta de erro em pagamentos/quotes — prioridade alta
+3. Performance: LCP > 2.5s — alerta de warning
+4. Error rate > 5% em 15min — alerta crítico
+5. Notificação via email (Slack quando disponível)
+   **Escopo:** Painel Sentry — não requer alteração de código.
+
+### [2026-05-08] S10 — Sentry breadcrumbs em Edge Functions Deno (não integrar)
+
+**Contexto:** Edge Functions (signup-factory, signup-retailer, accept-invite, verify-retailer, send-web-push) rodam no Deno runtime. @sentry/nextjs não é compatível com Deno.
+**Decisão:** Não integrar Sentry nas Edge Functions por enquanto. O Sentry SDK para Deno (@sentry/deno) existe mas adiciona complexidade. Erros em Edge Functions continuam visíveis nos logs do Supabase Dashboard. Reavaliar quando houver necessidade concreta de rastreamento distribuído.
+**Escopo:** Todas as Edge Functions em supabase/functions/.

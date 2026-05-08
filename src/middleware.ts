@@ -20,6 +20,10 @@ const PUBLIC_PATHS = [
   "/fabrica",
   "/design-system",
   "/linesheet-publico",
+  "/politica-de-privacidade",
+  "/sitemap.xml",
+  "/robots.txt",
+  "/monitoring",
 ];
 
 const ONBOARDING_PATH = "/onboarding";

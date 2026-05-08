@@ -85,7 +85,7 @@ export function DocumentListRow({ document }: DocumentListRowProps) {
           size="icon"
           onClick={handleView}
           disabled={opening}
-          title="Visualizar"
+          aria-label="Visualizar documento"
         >
           {opening ? (
             <Loader2 className="size-4 animate-spin" />
@@ -98,7 +98,7 @@ export function DocumentListRow({ document }: DocumentListRowProps) {
           size="icon"
           onClick={handleDelete}
           disabled={deleting}
-          title="Remover"
+          aria-label="Remover documento"
         >
           {deleting ? (
             <Loader2 className="size-4 animate-spin" />

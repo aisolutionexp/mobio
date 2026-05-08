@@ -227,10 +227,9 @@ export function ConversationView({
           variant="ghost"
           size="icon"
           onClick={() => setShowSearch((v) => !v)}
-          title="Buscar mensagens"
+          aria-label="Buscar mensagens"
         >
           <Search className="size-4" />
-          <span className="sr-only">Buscar</span>
         </Button>
       </div>
 

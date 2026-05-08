@@ -1,8 +1,30 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+  title: "MOBIO — Fashion Marketplace B2B",
+  description:
+    "Marketplace B2B de moda que conecta atelies e fabricas a lojistas multimarca. Descubra parceiros, monte linesheets e gerencie pedidos.",
+  openGraph: {
+    title: "MOBIO — Fashion Marketplace B2B",
+    description:
+      "Marketplace B2B de moda que conecta atelies e fabricas a lojistas multimarca.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MOBIO — Fashion Marketplace B2B",
+    description:
+      "Marketplace B2B de moda que conecta atelies e fabricas a lojistas multimarca.",
+  },
+};
 
 export default function Home() {
   return (
-    <div className="bg-background flex flex-1 flex-col items-center justify-center gap-12 p-8">
+    <main
+      id="main-content"
+      className="bg-background flex flex-1 flex-col items-center justify-center gap-12 p-8"
+    >
       <header className="text-center">
         <h1 className="font-heading text-primary text-5xl font-bold tracking-tight">
           MOBIO
@@ -49,6 +71,6 @@ export default function Home() {
           </p>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

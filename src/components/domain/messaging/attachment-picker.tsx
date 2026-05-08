@@ -107,10 +107,9 @@ export function AttachmentPicker({
         variant="ghost"
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-        title="Anexar arquivo"
+        aria-label="Anexar arquivo"
       >
         <Paperclip className="size-4" />
-        <span className="sr-only">Anexar</span>
       </Button>
 
       {attachments.length > 0 && (

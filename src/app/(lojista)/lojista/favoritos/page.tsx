@@ -68,7 +68,7 @@ export default async function FavoritosPage() {
       <Masthead
         eyebrow="Seus favoritos"
         title="Favoritos"
-        description="Atelies e produtos que voce salvou"
+        description="Ateliês e produtos que você salvou"
       />
 
       <FavoriteTabs
