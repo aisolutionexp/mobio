@@ -1,10 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
 import { requireFactoryAccess } from "@/lib/services/active-tenant";
 import type { ActionResult } from "@/types/actions";
+
+const orderIdSchema = z.string().uuid("Pedido inválido");
 
 const ORDERS_PATH = "/atelier/pedidos";
 
@@ -56,13 +59,16 @@ export async function listFactoryOrders(filters?: {
 }
 
 export async function getFactoryOrder(orderId: string) {
+  const parsed = orderIdSchema.safeParse(orderId);
+  if (!parsed.success) throw new Error(parsed.error.issues[0].message);
+
   const { tenantId } = await requireFactoryAccess();
   const supabase = await createClient();
 
   const { data: order, error } = await supabase
     .from("orders")
     .select(
-      "*, retailers(id, name, slug, logo_path, email), order_items(id, product_id, quantity, unit_price_cents, products(id, name, reference))",
+      "*, retailers(id, name, slug, logo_path, email), order_items(id, product_id, quantity, unit_price_cents, products(id, name, reference)), order_status_history(id, from_status, to_status, changed_by, notes, created_at)",
     )
     .eq("id", orderId)
     .eq("factory_id", tenantId)
@@ -77,6 +83,11 @@ export async function updateOrderStatus(
   newStatus: OrderStatus,
 ): Promise<ActionResult> {
   try {
+    const parsed = orderIdSchema.safeParse(orderId);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0].message };
+    }
+
     const { tenantId, role } = await requireFactoryAccess();
 
     if (role !== "atelier_owner" && role !== "admin") {
@@ -116,6 +127,12 @@ export async function updateOrderStatus(
       .eq("factory_id", tenantId);
 
     if (updateError) return { success: false, error: updateError.message };
+
+    supabase.functions
+      .invoke("send-order-status-email", {
+        body: { order_id: orderId, new_status: newStatus },
+      })
+      .catch(() => {});
 
     revalidatePath(ORDERS_PATH);
     revalidatePath(`${ORDERS_PATH}/${orderId}`);

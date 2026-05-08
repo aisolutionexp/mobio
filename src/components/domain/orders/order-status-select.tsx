@@ -4,16 +4,13 @@ import * as React from "react";
 import { toast } from "sonner";
 
 import { updateOrderStatus } from "@/lib/actions/orders";
+import { ORDER_STATUS_LABELS } from "@/lib/constants/order-status";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-const STATUS_OPTIONS = [
-  { value: "pending", label: "Pendente" },
-  { value: "processing", label: "Processando" },
-  { value: "shipped", label: "Enviado" },
-  { value: "delivered", label: "Entregue" },
-  { value: "cancelled", label: "Cancelado" },
-];
+const STATUS_OPTIONS = Object.entries(ORDER_STATUS_LABELS)
+  .filter(([value]) => value !== "confirmed")
+  .map(([value, label]) => ({ value, label }));
 
 export function OrderStatusSelect({
   orderId,

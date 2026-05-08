@@ -210,28 +210,33 @@ export default async function RetailerDetailPage({
           ) : (
             <div className="space-y-3">
               {quotes.map((quote) => (
-                <Plate key={quote.id} className="flex items-center gap-4">
-                  <div className="min-w-0 flex-1">
+                <Link
+                  key={quote.id}
+                  href={`/atelier/lojistas/${retailerId}/quotes/${quote.id}`}
+                >
+                  <Plate className="group hover:border-accent/50 flex items-center gap-4 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-heading text-sm font-semibold">
+                        Cotação #{quote.id.slice(0, 8)}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {new Date(quote.created_at).toLocaleDateString("pt-BR")}
+                        {quote.valid_until && (
+                          <>
+                            {" · Válida até "}
+                            {new Date(quote.valid_until).toLocaleDateString(
+                              "pt-BR",
+                            )}
+                          </>
+                        )}
+                      </p>
+                    </div>
                     <p className="font-heading text-sm font-semibold">
-                      Cotação #{quote.id.slice(0, 8)}
+                      {formatCurrency(quote.total_cents, quote.currency)}
                     </p>
-                    <p className="text-muted-foreground text-xs">
-                      {new Date(quote.created_at).toLocaleDateString("pt-BR")}
-                      {quote.valid_until && (
-                        <>
-                          {" · Válida até "}
-                          {new Date(quote.valid_until).toLocaleDateString(
-                            "pt-BR",
-                          )}
-                        </>
-                      )}
-                    </p>
-                  </div>
-                  <p className="font-heading text-sm font-semibold">
-                    {formatCurrency(quote.total_cents, quote.currency)}
-                  </p>
-                  <QuoteStatusBadge status={quote.status} />
-                </Plate>
+                    <QuoteStatusBadge status={quote.status} />
+                  </Plate>
+                </Link>
               ))}
             </div>
           )}

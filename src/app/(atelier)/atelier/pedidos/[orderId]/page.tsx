@@ -1,17 +1,35 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 
 import { getFactoryOrder } from "@/lib/actions/orders";
+import { getPaymentScheduleForOrder } from "@/lib/actions/payments";
 import { Masthead } from "@/components/editorial/masthead";
 import { Plate } from "@/components/editorial/plate";
 import { Avatar } from "@/components/ui/avatar";
 import { OrderStatusBadge } from "@/components/domain/orders/order-status-badge";
 import { OrderStatusSelect } from "@/components/domain/orders/order-status-select";
+import { OrderStatusTimelineRealtime } from "@/components/domain/orders/order-status-timeline-realtime";
+import { PaymentScheduleDisplay } from "@/components/domain/payments/payment-schedule-display";
+import { RecordPaymentDialog } from "@/components/domain/payments/record-payment-dialog";
+import { CreatePaymentScheduleForm } from "@/components/domain/payments/create-payment-schedule-form";
+import type { StatusHistoryEntry } from "@/components/domain/orders/order-status-timeline";
 
 function formatCurrency(cents: number, currency = "BRL") {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency,
   }).format(cents / 100);
+}
+
+function formatDate(iso: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
 }
 
 export default async function OrderDetailPage({
@@ -44,6 +62,15 @@ export default async function OrderDetailPage({
     products: { id: string; name: string; reference: string | null } | null;
   }>;
 
+  const statusHistory = (order.order_status_history ??
+    []) as unknown as StatusHistoryEntry[];
+
+  let paymentSchedules: Awaited<ReturnType<typeof getPaymentScheduleForOrder>> =
+    [];
+  try {
+    paymentSchedules = await getPaymentScheduleForOrder(orderId);
+  } catch {}
+
   const initials =
     retailer?.name
       .split(" ")
@@ -57,15 +84,40 @@ export default async function OrderDetailPage({
     0,
   );
 
+  const isCancelled = order.status === "cancelled";
+  const cancelEntry = isCancelled
+    ? [...statusHistory]
+        .filter((e) => e.to_status === "cancelled")
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )[0]
+    : null;
+
   return (
     <div className="space-y-6">
+      {/* Breadcrumb */}
+      <nav
+        aria-label="Navegação"
+        className="text-muted-foreground flex items-center gap-1 text-sm"
+      >
+        <Link href="/atelier/pedidos" className="hover:text-foreground">
+          Pedidos
+        </Link>
+        <ChevronRight aria-hidden="true" className="size-3.5" />
+        <span className="text-foreground font-medium">
+          {order.order_number ?? "Detalhe"}
+        </span>
+      </nav>
+
+      {/* Masthead */}
       <Masthead
-        eyebrow="Pedidos"
         title={order.order_number ?? `Pedido #${orderId.slice(0, 8)}`}
         actions={<OrderStatusBadge status={order.status} />}
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Cliente */}
         <Plate eyebrow="Cliente" title={retailer?.name ?? "Lojista"}>
           <div className="flex items-center gap-4">
             <Avatar
@@ -88,71 +140,128 @@ export default async function OrderDetailPage({
           </div>
         </Plate>
 
-        <Plate eyebrow="Status" title="Alterar status">
-          <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
-        </Plate>
+        {/* Status action */}
+        {!isCancelled && order.status !== "delivered" && (
+          <Plate eyebrow="Status" title="Alterar status">
+            <OrderStatusSelect
+              orderId={order.id}
+              currentStatus={order.status}
+            />
+          </Plate>
+        )}
       </div>
 
+      {/* Items */}
       <Plate eyebrow="Itens" title="Produtos do pedido">
         {orderItems.length === 0 ? (
           <p className="text-muted-foreground text-sm">
             Nenhum item registrado
           </p>
         ) : (
-          <div className="space-y-3">
-            {orderItems.map((item) => (
-              <div
-                key={item.id}
-                className="border-border flex items-center justify-between border-b pb-3 last:border-0 last:pb-0"
-              >
-                <div>
-                  <p className="text-sm font-medium">
-                    {item.products?.name ?? "Produto removido"}
-                  </p>
-                  {item.products?.reference && (
-                    <p className="text-muted-foreground text-xs">
-                      Ref: {item.products.reference}
-                    </p>
-                  )}
-                </div>
-                <div className="text-right">
-                  <p className="text-sm">
-                    {item.quantity}x{" "}
-                    {formatCurrency(item.unit_price_cents, order.currency)}
-                  </p>
-                  <p className="font-heading text-sm font-semibold">
-                    {formatCurrency(
-                      item.quantity * item.unit_price_cents,
-                      order.currency,
-                    )}
-                  </p>
-                </div>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-border text-muted-foreground border-b text-left">
+                  <th className="pr-4 pb-2 font-medium">Produto</th>
+                  <th className="pr-4 pb-2 text-right font-medium">Qtd</th>
+                  <th className="pr-4 pb-2 text-right font-medium">
+                    Preço unit.
+                  </th>
+                  <th className="pb-2 text-right font-medium">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderItems.map((item) => {
+                  const sub = item.quantity * item.unit_price_cents;
+                  return (
+                    <tr
+                      key={item.id}
+                      className="border-border border-b last:border-0"
+                    >
+                      <td className="py-3 pr-4">
+                        <span className="font-medium">
+                          {item.products?.name ?? "Produto removido"}
+                        </span>
+                        {item.products?.reference && (
+                          <span className="text-muted-foreground ml-2 text-xs">
+                            Ref: {item.products.reference}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 pr-4 text-right">{item.quantity}</td>
+                      <td className="py-3 pr-4 text-right">
+                        {formatCurrency(item.unit_price_cents, order.currency)}
+                      </td>
+                      <td className="py-3 text-right">
+                        {formatCurrency(sub, order.currency)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan={3} className="pt-3 text-right font-medium">
+                    Total
+                  </td>
+                  <td className="font-heading pt-3 text-right text-lg font-semibold">
+                    {formatCurrency(order.total_cents, order.currency)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         )}
       </Plate>
 
-      <Plate eyebrow="Financeiro" title="Resumo">
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Subtotal</span>
-            <span>{formatCurrency(subtotalCents, order.currency)}</span>
-          </div>
-          <div className="border-border flex justify-between border-t pt-2 text-base font-semibold">
-            <span>Total</span>
-            <span className="font-heading">
-              {formatCurrency(order.total_cents, order.currency)}
-            </span>
-          </div>
-        </div>
+      {/* Timeline — Realtime */}
+      <Plate eyebrow="Atividade" title="Timeline de status">
+        <OrderStatusTimelineRealtime
+          orderId={order.id}
+          initialHistory={statusHistory}
+          initialStatus={order.status}
+          showStatusBadge
+        />
       </Plate>
 
-      <Plate eyebrow="Atividade" title="Timeline">
-        <div className="text-muted-foreground flex flex-col items-center gap-2 py-6 text-center">
-          <p className="text-sm">Timeline de atividades em breve</p>
-        </div>
+      {/* Pagamento */}
+      <Plate eyebrow="Pagamento" title="Condições de pagamento">
+        {paymentSchedules.length > 0 ? (
+          <div className="space-y-4">
+            <PaymentScheduleDisplay
+              schedules={paymentSchedules}
+              currency={order.currency}
+            />
+            {paymentSchedules[0].status !== "cancelled" &&
+              paymentSchedules[0].status !== "paid" && (
+                <RecordPaymentDialog
+                  scheduleId={paymentSchedules[0].id}
+                  maxCents={paymentSchedules[0].total_cents}
+                  currency={order.currency}
+                />
+              )}
+          </div>
+        ) : (
+          <CreatePaymentScheduleForm orderId={order.id} />
+        )}
       </Plate>
+
+      {/* Cancelamento info */}
+      {isCancelled && cancelEntry && (
+        <Plate eyebrow="Cancelamento" accent>
+          <div className="space-y-1 text-sm">
+            <p className="text-destructive font-medium">Pedido cancelado</p>
+            <p className="text-muted-foreground">
+              Em {formatDate(cancelEntry.created_at)}
+            </p>
+            {cancelEntry.notes && (
+              <p className="text-muted-foreground">
+                Motivo: {cancelEntry.notes}
+              </p>
+            )}
+          </div>
+        </Plate>
+      )}
     </div>
   );
 }

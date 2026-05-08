@@ -531,6 +531,7 @@ export type Database = {
       };
       factory_settings: {
         Row: {
+          cancellation_policy_hours: number;
           commercial_terms: Json;
           created_at: string;
           factory_id: string;
@@ -539,6 +540,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          cancellation_policy_hours?: number;
           commercial_terms?: Json;
           created_at?: string;
           factory_id: string;
@@ -547,6 +549,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          cancellation_policy_hours?: number;
           commercial_terms?: Json;
           created_at?: string;
           factory_id?: string;
@@ -996,6 +999,44 @@ export type Database = {
           },
         ];
       };
+      order_status_history: {
+        Row: {
+          changed_by: string;
+          created_at: string;
+          from_status: string;
+          id: string;
+          notes: string | null;
+          order_id: string;
+          to_status: string;
+        };
+        Insert: {
+          changed_by: string;
+          created_at?: string;
+          from_status: string;
+          id?: string;
+          notes?: string | null;
+          order_id: string;
+          to_status: string;
+        };
+        Update: {
+          changed_by?: string;
+          created_at?: string;
+          from_status?: string;
+          id?: string;
+          notes?: string | null;
+          order_id?: string;
+          to_status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       orders: {
         Row: {
           created_at: string;
@@ -1072,6 +1113,85 @@ export type Database = {
             columns: ["shipping_address_id"];
             isOneToOne: false;
             referencedRelation: "addresses";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      payment_records: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          id: string;
+          paid_at: string;
+          payment_method: string;
+          schedule_id: string;
+          transaction_ref: string | null;
+        };
+        Insert: {
+          amount_cents: number;
+          created_at?: string;
+          id?: string;
+          paid_at?: string;
+          payment_method: string;
+          schedule_id: string;
+          transaction_ref?: string | null;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          id?: string;
+          paid_at?: string;
+          payment_method?: string;
+          schedule_id?: string;
+          transaction_ref?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payment_records_schedule_id_fkey";
+            columns: ["schedule_id"];
+            isOneToOne: false;
+            referencedRelation: "payment_schedules";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      payment_schedules: {
+        Row: {
+          created_at: string;
+          due_date: string | null;
+          id: string;
+          order_id: string;
+          signal_pct: number;
+          status: string;
+          total_cents: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          due_date?: string | null;
+          id?: string;
+          order_id: string;
+          signal_pct?: number;
+          status?: string;
+          total_cents: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          due_date?: string | null;
+          id?: string;
+          order_id?: string;
+          signal_pct?: number;
+          status?: string;
+          total_cents?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payment_schedules_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
             referencedColumns: ["id"];
           },
         ];
@@ -1370,6 +1490,51 @@ export type Database = {
             columns: ["quote_id"];
             isOneToOne: false;
             referencedRelation: "quotes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      quote_messages: {
+        Row: {
+          attachments: Json;
+          body: string;
+          created_at: string;
+          id: string;
+          is_read: boolean;
+          quote_id: string;
+          sender_user_id: string;
+        };
+        Insert: {
+          attachments?: Json;
+          body: string;
+          created_at?: string;
+          id?: string;
+          is_read?: boolean;
+          quote_id: string;
+          sender_user_id: string;
+        };
+        Update: {
+          attachments?: Json;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          is_read?: boolean;
+          quote_id?: string;
+          sender_user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quote_messages_quote_id_fkey";
+            columns: ["quote_id"];
+            isOneToOne: false;
+            referencedRelation: "quotes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quote_messages_sender_user_id_fkey";
+            columns: ["sender_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];
@@ -1830,7 +1995,9 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      accept_quote: { Args: { p_quote_id: string }; Returns: string };
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
+      fn_can_cancel_order: { Args: { p_order_id: string }; Returns: boolean };
       get_linesheet_by_token: { Args: { p_token: string }; Returns: Json };
       search_factories: {
         Args: {
