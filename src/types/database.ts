@@ -338,6 +338,8 @@ export type Database = {
       };
       conversations: {
         Row: {
+          context_id: string | null;
+          context_type: string | null;
           created_at: string;
           factory_id: string;
           id: string;
@@ -347,6 +349,8 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          context_id?: string | null;
+          context_type?: string | null;
           created_at?: string;
           factory_id: string;
           id?: string;
@@ -356,6 +360,8 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          context_id?: string | null;
+          context_type?: string | null;
           created_at?: string;
           factory_id?: string;
           id?: string;
@@ -880,10 +886,47 @@ export type Database = {
           },
         ];
       };
+      message_attachments: {
+        Row: {
+          file_name: string;
+          file_size_bytes: number;
+          file_type: string;
+          id: string;
+          message_id: string;
+          message_type: string;
+          storage_path: string;
+          uploaded_at: string;
+          uploaded_by: string;
+        };
+        Insert: {
+          file_name: string;
+          file_size_bytes: number;
+          file_type: string;
+          id?: string;
+          message_id: string;
+          message_type: string;
+          storage_path: string;
+          uploaded_at?: string;
+          uploaded_by: string;
+        };
+        Update: {
+          file_name?: string;
+          file_size_bytes?: number;
+          file_type?: string;
+          id?: string;
+          message_id?: string;
+          message_type?: string;
+          storage_path?: string;
+          uploaded_at?: string;
+          uploaded_by?: string;
+        };
+        Relationships: [];
+      };
       messages: {
         Row: {
           attachments: Json | null;
           body: string;
+          body_tsv: unknown;
           conversation_id: string;
           created_at: string;
           deleted_at: string | null;
@@ -895,6 +938,7 @@ export type Database = {
         Insert: {
           attachments?: Json | null;
           body: string;
+          body_tsv?: unknown;
           conversation_id: string;
           created_at?: string;
           deleted_at?: string | null;
@@ -906,6 +950,7 @@ export type Database = {
         Update: {
           attachments?: Json | null;
           body?: string;
+          body_tsv?: unknown;
           conversation_id?: string;
           created_at?: string;
           deleted_at?: string | null;
@@ -1449,6 +1494,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      push_subscriptions: {
+        Row: {
+          auth: string;
+          created_at: string;
+          endpoint: string;
+          id: string;
+          is_active: boolean;
+          last_used_at: string | null;
+          p256dh: string;
+          user_agent: string | null;
+          user_id: string;
+        };
+        Insert: {
+          auth: string;
+          created_at?: string;
+          endpoint: string;
+          id?: string;
+          is_active?: boolean;
+          last_used_at?: string | null;
+          p256dh: string;
+          user_agent?: string | null;
+          user_id: string;
+        };
+        Update: {
+          auth?: string;
+          created_at?: string;
+          endpoint?: string;
+          id?: string;
+          is_active?: boolean;
+          last_used_at?: string | null;
+          p256dh?: string;
+          user_agent?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       quote_items: {
         Row: {
           created_at: string;
@@ -1689,6 +1770,50 @@ export type Database = {
           },
         ];
       };
+      retailer_documents: {
+        Row: {
+          doc_type: string;
+          file_name: string;
+          id: string;
+          retailer_id: string;
+          storage_path: string;
+          uploaded_at: string;
+          uploaded_by: string;
+          verified_at: string | null;
+          verified_by: string | null;
+        };
+        Insert: {
+          doc_type: string;
+          file_name: string;
+          id?: string;
+          retailer_id: string;
+          storage_path: string;
+          uploaded_at?: string;
+          uploaded_by: string;
+          verified_at?: string | null;
+          verified_by?: string | null;
+        };
+        Update: {
+          doc_type?: string;
+          file_name?: string;
+          id?: string;
+          retailer_id?: string;
+          storage_path?: string;
+          uploaded_at?: string;
+          uploaded_by?: string;
+          verified_at?: string | null;
+          verified_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "retailer_documents_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       retailer_segments: {
         Row: {
           category_id: string;
@@ -1832,6 +1957,98 @@ export type Database = {
           },
           {
             foreignKeyName: "showroom_attendees_showroom_id_fkey";
+            columns: ["showroom_id"];
+            isOneToOne: false;
+            referencedRelation: "showrooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      showroom_bookings: {
+        Row: {
+          confirmed_at: string | null;
+          created_at: string;
+          id: string;
+          notes: string | null;
+          retailer_id: string;
+          slot_id: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          confirmed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          notes?: string | null;
+          retailer_id: string;
+          slot_id: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          confirmed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          notes?: string | null;
+          retailer_id?: string;
+          slot_id?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "showroom_bookings_retailer_id_fkey";
+            columns: ["retailer_id"];
+            isOneToOne: false;
+            referencedRelation: "retailers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "showroom_bookings_slot_id_fkey";
+            columns: ["slot_id"];
+            isOneToOne: false;
+            referencedRelation: "showroom_slots";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      showroom_slots: {
+        Row: {
+          created_at: string;
+          ends_at: string;
+          id: string;
+          is_available: boolean;
+          location_details: string | null;
+          max_attendees: number;
+          showroom_id: string;
+          starts_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          ends_at: string;
+          id?: string;
+          is_available?: boolean;
+          location_details?: string | null;
+          max_attendees?: number;
+          showroom_id: string;
+          starts_at: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          ends_at?: string;
+          id?: string;
+          is_available?: boolean;
+          location_details?: string | null;
+          max_attendees?: number;
+          showroom_id?: string;
+          starts_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "showroom_slots_showroom_id_fkey";
             columns: ["showroom_id"];
             isOneToOne: false;
             referencedRelation: "showrooms";
@@ -2026,6 +2243,40 @@ export type Database = {
         SetofOptions: {
           from: "*";
           to: "factories";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      list_my_conversations: {
+        Args: { p_user_id: string };
+        Returns: {
+          conversation_id: string;
+          factory_id: string;
+          retailer_id: string;
+          context_type: string | null;
+          context_id: string | null;
+          last_message_body: string | null;
+          last_message_at: string | null;
+          unread_count: number;
+        }[];
+      };
+      search_messages: {
+        Args: { p_conversation_id: string; p_query: string };
+        Returns: {
+          attachments: Json | null;
+          body: string;
+          body_tsv: unknown;
+          conversation_id: string;
+          created_at: string;
+          deleted_at: string | null;
+          edited_at: string | null;
+          id: string;
+          is_read: boolean;
+          sender_user_id: string;
+        }[];
+        SetofOptions: {
+          from: "*";
+          to: "messages";
           isOneToOne: false;
           isSetofReturn: true;
         };

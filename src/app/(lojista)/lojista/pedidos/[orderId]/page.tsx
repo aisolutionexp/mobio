@@ -10,6 +10,7 @@ import { CancelOrderButton } from "@/components/domain/orders/cancel-order-butto
 import { PaymentScheduleDisplay } from "@/components/domain/payments/payment-schedule-display";
 import { getRetailerOrder } from "@/lib/actions/orders-retailer";
 import { getPaymentScheduleForOrder } from "@/lib/actions/payments";
+import { OpenConversationLink } from "@/components/domain/messaging/open-conversation-link";
 import type { StatusHistoryEntry } from "@/components/domain/orders/order-status-timeline";
 
 function formatCurrency(cents: number, currency = "BRL") {
@@ -85,6 +86,15 @@ export default async function RetailerOrderDetailPage({
           <OrderStatusBadge status={order.status} />
         </div>
         <div className="flex items-center gap-3">
+          {factory && (
+            <OpenConversationLink
+              factoryId={order.factory_id}
+              retailerId={order.retailer_id}
+              contextType="order"
+              contextId={order.id}
+              shellPrefix="lojista"
+            />
+          )}
           {canCancel && <CancelOrderButton orderId={order.id} />}
           <span className="text-muted-foreground text-sm">
             Criado em {formatDate(order.created_at)}

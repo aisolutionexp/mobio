@@ -8,6 +8,7 @@ import { Eyebrow } from "@/components/editorial/eyebrow";
 import { QuoteStatusBadge } from "@/components/domain/quotes/quote-status-badge";
 import { RetailerQuoteActions } from "@/components/domain/quotes/retailer-quote-actions";
 import { RetailerQuoteChatWrapper } from "@/components/domain/quotes/retailer-quote-chat-wrapper";
+import { OpenConversationLink } from "@/components/domain/messaging/open-conversation-link";
 import {
   getRetailerQuoteWithItems,
   listRetailerQuoteMessages,
@@ -84,9 +85,20 @@ export default async function RetailerQuoteDetailPage({
           </h1>
           <QuoteStatusBadge status={quote.status} />
         </div>
-        <span className="text-muted-foreground text-sm">
-          Recebida em {formatDate(quote.created_at)}
-        </span>
+        <div className="flex items-center gap-3">
+          {factory && (
+            <OpenConversationLink
+              factoryId={quote.factory_id}
+              retailerId={quote.retailer_id}
+              contextType="quote"
+              contextId={quote.id}
+              shellPrefix="lojista"
+            />
+          )}
+          <span className="text-muted-foreground text-sm">
+            Recebida em {formatDate(quote.created_at)}
+          </span>
+        </div>
       </div>
 
       {/* Factory info */}

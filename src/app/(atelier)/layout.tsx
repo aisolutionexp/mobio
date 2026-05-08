@@ -6,6 +6,7 @@ import {
   FileText,
   ShoppingBag,
   Store,
+  MessageSquare,
   Settings,
 } from "lucide-react";
 
@@ -38,6 +39,12 @@ const ATELIER_NAV: NavItem[] = [
   { number: "06", label: "Lojistas", href: "/atelier/lojistas", icon: Store },
   {
     number: "07",
+    label: "Mensagens",
+    href: "/atelier/mensagens",
+    icon: MessageSquare,
+  },
+  {
+    number: "08",
     label: "Configurações",
     href: "/atelier/conta",
     icon: Settings,

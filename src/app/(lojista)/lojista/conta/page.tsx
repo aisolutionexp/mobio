@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Users, MapPin, CreditCard, User } from "lucide-react";
+import { Users, MapPin, CreditCard, User, FileText } from "lucide-react";
 
 import { Masthead } from "@/components/editorial/masthead";
 import { Plate } from "@/components/editorial/plate";
+import { PushSubscribeButton } from "@/components/domain/notifications/push-subscribe-button";
 
 const CONTA_SECTIONS = [
   {
@@ -27,6 +28,13 @@ const CONTA_SECTIONS = [
     placeholder: true,
   },
   {
+    title: "Documentos",
+    description: "Envie documentos da empresa",
+    href: "/lojista/conta/documentos",
+    icon: FileText,
+    placeholder: false,
+  },
+  {
     title: "Perfil",
     description: "Seus dados pessoais",
     href: "/lojista/conta/perfil",
@@ -43,6 +51,20 @@ export default function LojistaContaPage() {
         title="Minha conta"
         description="Gerencie sua conta e configurações"
       />
+
+      <Plate>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-heading text-base font-semibold">
+              Notificações push
+            </h3>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Receba alertas mesmo com o navegador fechado
+            </p>
+          </div>
+          <PushSubscribeButton />
+        </div>
+      </Plate>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CONTA_SECTIONS.map((section) => {

@@ -13,6 +13,7 @@ import { OrderStatusTimelineRealtime } from "@/components/domain/orders/order-st
 import { PaymentScheduleDisplay } from "@/components/domain/payments/payment-schedule-display";
 import { RecordPaymentDialog } from "@/components/domain/payments/record-payment-dialog";
 import { CreatePaymentScheduleForm } from "@/components/domain/payments/create-payment-schedule-form";
+import { OpenConversationLink } from "@/components/domain/messaging/open-conversation-link";
 import type { StatusHistoryEntry } from "@/components/domain/orders/order-status-timeline";
 
 function formatCurrency(cents: number, currency = "BRL") {
@@ -113,7 +114,20 @@ export default async function OrderDetailPage({
       {/* Masthead */}
       <Masthead
         title={order.order_number ?? `Pedido #${orderId.slice(0, 8)}`}
-        actions={<OrderStatusBadge status={order.status} />}
+        actions={
+          <div className="flex items-center gap-2">
+            {retailer && (
+              <OpenConversationLink
+                factoryId={order.factory_id}
+                retailerId={retailer.id}
+                contextType="order"
+                contextId={order.id}
+                shellPrefix="atelier"
+              />
+            )}
+            <OrderStatusBadge status={order.status} />
+          </div>
+        }
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

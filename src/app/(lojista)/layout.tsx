@@ -5,7 +5,9 @@ import {
   LayoutGrid,
   FileText,
   Heart,
+  CalendarDays,
   ShoppingBag,
+  MessageSquare,
   User,
 } from "lucide-react";
 
@@ -32,11 +34,23 @@ const LOJISTA_NAV: NavItem[] = [
   { number: "05", label: "Favoritos", href: "/lojista/favoritos", icon: Heart },
   {
     number: "06",
+    label: "Showroom",
+    href: "/lojista/showroom",
+    icon: CalendarDays,
+  },
+  {
+    number: "07",
     label: "Pedidos",
     href: "/lojista/pedidos",
     icon: ShoppingBag,
   },
-  { number: "07", label: "Conta", href: "/lojista/conta", icon: User },
+  {
+    number: "08",
+    label: "Mensagens",
+    href: "/lojista/mensagens",
+    icon: MessageSquare,
+  },
+  { number: "09", label: "Conta", href: "/lojista/conta", icon: User },
 ];
 
 export default async function LojistaLayout({
